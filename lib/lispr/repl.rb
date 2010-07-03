@@ -15,7 +15,7 @@ module Lispr
           begin
             exprs = Reader.new(input).read
             exprs.each do |exp|
-              puts exp.eval($scope)
+              exp.eval($scope)
             end
           rescue EOFError => e
             input += gets

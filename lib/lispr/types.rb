@@ -66,7 +66,7 @@ module Lispr
 
   class LispString < String
     attr_reader :car, :cdr
-    def intialize value
+    def initialize value
       @value = value
       @car   = LispString.new value[0].chr
       @cdr   = LispString.new value[1..-1]
@@ -81,7 +81,8 @@ module Lispr
     end
   end
 
-  class LispNumeric < Numeric
+  class LispNumeric
+
     def initialize value
       @value = value
     end
@@ -93,8 +94,14 @@ module Lispr
     def eval(scope)
       self
     end
-  end
 
+    #http://stackoverflow.com/questions/1095789/sub-classing-fixnum-in-ruby
+    def method_missing(name, *args, &blk)
+      ret = @value.send(name, *args, &blk)
+      ret.is_a?(Numeric) ? LispNumeric.new(ret) : ret
+    end
+
+  end
 
   class Keyword
     def initialize value
