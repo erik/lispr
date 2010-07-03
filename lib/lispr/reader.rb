@@ -77,9 +77,39 @@ module Lispr
 
         self.shift
       end
+      return expr
     end
 
     def read_list
+      expr = []
+      while self.shift != ')'
+        if self.current =~ @@ws
+          @line_num += 1 if self.current == "\n"
+          next
+
+        elsif self.current == ';'
+          while self.shift !=  "\n"
+          end
+          self.unshift
+          @line_num += 1
+
+        elsif self.current == '('
+          expr << self.read_list
+
+        elsif self.current == '"'
+          expr << self.read_string
+
+        elsif self.current =~ /[0-9]/
+          expr << self.read_num
+
+        elsif self.current == ':'
+          expr << self.read_keyword
+
+        else
+          expr << self.read_symbol
+        end
+      end
+      List.new expr
     end
 
     def read_string
@@ -91,7 +121,7 @@ module Lispr
           str << self.shift
         end
       end
-      str
+      LispString.new str
     end
 
     def read_num
@@ -101,12 +131,11 @@ module Lispr
       end
       self.unshift
 
-      return Float(num)   if num =~ /\./
-      return Integer(num)
+      return LispNumeric.new(num =~ /\./ ? Float(num) : Integer(num))
     end
 
     def read_symbol
-      sym = ""
+      sym = self.current
       until self.shift =~ /[)]|#{@@ws}/
         sym += self.current
       end

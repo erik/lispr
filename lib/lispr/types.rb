@@ -25,7 +25,7 @@ module Lispr
     #(1 (2 (3)))  == List.new [1, List.new([2, List.new([3]) ])]
     def initialize (value)
       @value = value
-      @car   = value.first
+      @car   = value[0]
       @cdr   = unless value[1..-1].empty?
                  value[1..-1]
                else
@@ -37,11 +37,11 @@ module Lispr
       str = '(' + @car.to_s + (@cdr.each {|e| e.to_s}.join ' ') + ')'
     end
 
-    def eval
-      if @car
-        @car.eval(@cdr.eval)
+    def eval(scope)
+      if @value.size != 0
+        @car.eval(scope).call(scope, @cdr)
       else
-        nil
+        $symbol["nil"]
       end
     end
 
@@ -64,11 +64,41 @@ module Lispr
     end
   end
 
+  class LispString < String
+    attr_reader :car, :cdr
+    def intialize value
+      @value = value
+      @car   = LispString.new value[0].chr
+      @cdr   = LispString.new value[1..-1]
+    end
+
+    def to_s
+      @value.to_s
+    end
+
+    def eval(scope)
+      self
+    end
+  end
+
+  class LispNumeric < Numeric
+    def initialize value
+      @value = value
+    end
+
+    def to_s
+      @value.to_s
+    end
+
+    def eval(scope)
+      self
+    end
+  end
+
 
   class Keyword
     def initialize value
       @value = value
-      puts @value
     end
 
     def to_s

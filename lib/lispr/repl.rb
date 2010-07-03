@@ -13,7 +13,10 @@ module Lispr
           print @prompt
           input = gets
           begin
-            Reader.new(input).read
+            exprs = Reader.new(input).read
+            exprs.each do |exp|
+              puts exp.eval($scope)
+            end
           rescue EOFError => e
             input += gets
             retry
@@ -22,7 +25,7 @@ module Lispr
           #subclasses of StandardError are not usually serious, and can be
           #reported without exitting
           if e.is_a?(StandardError) || e.is_a?(ScriptError)
-            print "#{e.class}: "
+            print "#{e.class}: " unless e.is_a?(RuntimeError)
             puts  "#{e.message}"
             next
           end
