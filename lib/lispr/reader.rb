@@ -99,14 +99,30 @@ module Lispr
       until self.shift =~ /[)]|#{@@ws}/
         num << self.current
       end
+      self.unshift
+
       return Float(num)   if num =~ /\./
       return Integer(num)
     end
 
     def read_symbol
+      sym = ""
+      until self.shift =~ /[)]|#{@@ws}/
+        sym += self.current
+      end
+      self.unshift
+
+      LispSymbol.new sym
     end
 
     def read_keyword
+      keyword = ""
+      until self.shift =~ /[)]|#{@@ws}/
+        keyword += self.current
+      end
+      self.unshift
+
+      Keyword.new(keyword)
     end
   end
 end
