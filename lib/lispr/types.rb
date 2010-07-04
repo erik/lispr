@@ -89,7 +89,7 @@ module Lispr
     end
 
     def to_s
-      @value.to_s unless @value.nil?
+      return @value.to_s unless @value.nil?
       "nil"
     end
 
@@ -108,7 +108,7 @@ module Lispr
     end
 
     def to_s
-      "\"#{@value.to_s}\""
+      "\"#{@value}\""
     end
 
     def eval(scope)

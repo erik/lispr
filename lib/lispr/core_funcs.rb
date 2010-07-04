@@ -60,6 +60,9 @@ module Lispr
   comment = lambda { |scope, *args| $scope["nil"]}
   $scope["comment"] = comment
 
+  quote = lambda {|scope, first| first }
+  $scope["quote"] = quote
+
   #TODO: make def work on a local scope rather than global!
   def_ = lambda { |scope, symbol, value| $scope[symbol.to_s] = value.eval(scope)}
   $scope["def"]  = def_
