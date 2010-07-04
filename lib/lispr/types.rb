@@ -1,9 +1,23 @@
 module Lispr
 
+  module Generic
+    attr_reader :value
+    def eql? scope, other
+      val = self.eval(scope)
+      oth = other.eval(scope)
+      begin
+        return val.value == oth.value
+      rescue Exception => e
+        return val == oth
+      end
+    end
+  end
+
   #Each type contains at least 2 methods, to_s for a string representation of it
   #and eval, for the semantic value of the object
 
   class Atom
+    include Generic
     def initialize value
       @value = value
     end
@@ -18,6 +32,7 @@ module Lispr
   end
 
   class List
+    include Generic
     attr_reader :value
     #value is an array containing the values
     #(1 2 3)      == List.new [1, 2, 3]
@@ -68,6 +83,7 @@ module Lispr
 
   #Symbol is a built in Ruby class
   class LispSymbol
+    include Generic
     def initialize(value)
       @value = value
     end
@@ -82,6 +98,7 @@ module Lispr
   end
 
   class LispString < String
+    include Generic
     attr_reader :car, :cdr
     def initialize value
       @value = value
@@ -99,7 +116,7 @@ module Lispr
   end
 
   class LispNumeric
-
+    include Generic
     def initialize value
       @value = value
     end
@@ -121,6 +138,7 @@ module Lispr
   end
 
   class Keyword
+    include Generic
     def initialize value
       @value = value
     end
