@@ -15,9 +15,7 @@ module Lispr
           begin
             exprs = Reader.new(input).read
             exprs.each do |exp|
-              val = exp.eval($scope)
-              puts val.to_s unless val.value.nil?
-              puts "nil" if val.value.nil?
+              puts exp.eval($scope)
             end
           rescue EOFError => e
             input += gets

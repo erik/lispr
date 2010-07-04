@@ -33,9 +33,12 @@ module Lispr
   end
   $scope["/"]    = div
 
-  mod = lambda { |scope, first, second| first % second }
+  mod = lambda { |scope, first, second| first.eval(scope) % second.eval(scope) }
   $scope["%"]    = mod
   $scope["mod"]  = mod
+
+  lt = lambda { |scope, first, second| first.eval(scope) < second.eval(scope)}
+  $scope["<"]    = lt
 
   #standard utility functions
 
