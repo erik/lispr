@@ -82,6 +82,7 @@ module Lispr
 
     def read_list
       expr = []
+      proper = true
       while self.shift != ')'
         if self.current =~ @@ws
           @line_num += 1 if self.current == "\n"
@@ -102,6 +103,9 @@ module Lispr
         elsif self.current =~ /[0-9]/
           expr << self.read_num
 
+        elsif self.current == '.'
+          proper = false
+
         elsif self.current == ':'
           expr << self.read_keyword
 
@@ -109,7 +113,8 @@ module Lispr
           expr << self.read_symbol
         end
       end
-      List.new expr
+     return List.new(expr + [[]]) if proper
+     List.new(expr)
     end
 
     def read_string
