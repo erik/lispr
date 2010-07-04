@@ -52,15 +52,13 @@ module Lispr
     end
 
     def eval(scope)
-      puts ">>#{self.to_s}"
       if @value.size == 0 or @value == [[]]
         LispSymbol.new "nil"
       elsif @value[-1] != []
         self.car.eval(scope).call(scope, self.cdr)
       else
-        puts "else"
         cdr = self.cdr.value[0..-1]
-        self.car.eval(scope).call(scope, *self.cdr.value[0..-1])
+        self.car.eval(scope).call(scope, *self.cdr.value[0..-1].flatten)
       end
     end
 
