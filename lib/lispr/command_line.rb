@@ -27,10 +27,16 @@ module Lispr
 
         opts.on("-?", "-h", "--help", "Display this help message") do
           puts @opts
+          exit 0
         end
 
         opts.on("-t", "--trace", "Provide more specific errors") do
           @options[:trace] = true
+        end
+
+        opts.on("-e code", "--evaluate code", "Evaluate a single line of code") do |code|
+          Lispr::Reader.new(code+"\n").read.each {|x| puts x.eval($scope)}
+          exit 0
         end
 
       end

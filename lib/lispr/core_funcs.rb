@@ -37,16 +37,25 @@ module Lispr
   $scope["%"]    = mod
   $scope["mod"]  = mod
 
+  eql = lambda{ |scope, first, second| first.eql? scope, second }
+  $scope["="] = eql
+
   lt = lambda { |scope, first, second| first.eval(scope) < second.eval(scope)}
   $scope["<"]    = lt
+
+  lte = lambda { |scope, first, second| first.eval(scope) <= second.eval(scope)}
+  $scope["<="]   = lte
+
+  gt = lambda { |scope, first, second| first.eval(scope) > second.eval(scope)}
+  $scope[">"]    = gt
+
+  gte = lambda { |scope, first, second| first.eval(scope) >= second.eval(scope)}
+  $scope[">="]   = gte
 
   #standard utility functions
 
   class_ = lambda { |scope, first| first.eval(scope).class }
   $scope["class"] = class_
-
-  eql = lambda{ |scope, first, second| first.eql? scope, second }
-  $scope["="] = eql
 
   comment = lambda { |scope, *args| $scope["nil"]}
   $scope["comment"] = comment

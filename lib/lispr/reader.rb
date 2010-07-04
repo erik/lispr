@@ -37,7 +37,6 @@ module Lispr
       expr = []
       while @index < @source.size - 1
 
-
         #skip over whitespace
         if self.current =~ @@ws
           @line_num += 1 if self.current == "\n"
