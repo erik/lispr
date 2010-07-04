@@ -7,8 +7,6 @@ require 'lispr/scope'
 require 'lispr/types'
 require 'lispr/version'
 
-
-
 module Lispr
   $scope = Scope.new
   $scope["true"]  = LispSymbol.new true
