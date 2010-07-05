@@ -69,6 +69,10 @@ module Lispr
         elsif self.current == ':'
           expr << self.read_keyword
 
+        elsif self.current == "'"
+          self.shift
+          expr << List.new([] << LispSymbol.new("quote") << self.read_symbol)
+
         #everything else is a symbol
         else
           expr << self.read_symbol
@@ -107,6 +111,10 @@ module Lispr
 
         elsif self.current == ':'
           expr << self.read_keyword
+
+        elsif self.current == "'"
+          self.shift
+          expr << List.new([] << LispSymbol.new("quote") << self.read_symbol)
 
         else
           expr << self.read_symbol

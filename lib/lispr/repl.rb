@@ -15,8 +15,8 @@ module Lispr
           begin
             exprs = Reader.new(input).read
             exprs.each do |exp|
-              print " => "
               val = exp.eval($scope)
+              print " => "
               if val.is_a?(String)
                 puts "\"#{val.to_s}\""
               elsif val.nil?

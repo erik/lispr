@@ -71,6 +71,35 @@ module Lispr
   }
   $scope["list"] = list
 
+  print_ = lambda{ |scope, *values|
+    values.each{|val| print val.eval(scope).to_s, ' '}
+    nil
+  }
+  $scope["print"] = print_
+
+  puts_ = lambda { |scope, *values|
+    values.each{|val| print val.eval(scope).to_s, ' '}
+    puts
+    nil
+  }
+  $scope["puts"] = puts_
+
+  car = lambda { |scope, value|
+    val = value.eval(scope)
+    return $scope["nil"] if (val.nil? or val.eql?(scope, LispSymbol.new("nil")))
+    val.car
+  }
+  $scope["car"]   = car
+  $scope["first"] = car
+
+  cdr = lambda {|scope, value|
+    val = value.eval(scope)
+    return $scope["nil"] if (val.nil? or val.eql?(scope, LispSymbol.new("nil")))
+    val.cdr
+  }
+  $scope["cdr"]   = cdr
+  $scope["rest"]  = cdr
+
   #TODO: make def work on a local scope rather than global!
   def_ = lambda { |scope, symbol, value| $scope[symbol.to_s] = value.eval(scope)}
   $scope["def"]  = def_

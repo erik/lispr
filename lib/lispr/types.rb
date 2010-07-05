@@ -100,11 +100,8 @@ module Lispr
 
   class LispString < String
     include Generic
-    attr_reader :car, :cdr
     def initialize value
       @value = value
-      @car   = value[0]? value[0].chr : value[0]
-      @cdr   = value[1..-1]
     end
 
     def to_s
@@ -114,6 +111,24 @@ module Lispr
     def eval(scope)
       self
     end
+
+    def car
+      if @value.size > 0
+        @value[0].chr
+      else
+        $scope["nil"]
+      end
+    end
+
+    def cdr
+      if @value.size == 0
+        $scope["nil"]
+
+      else
+        LispString.new @value[1..-1]
+      end
+    end
+
   end
 
   class LispNumeric
