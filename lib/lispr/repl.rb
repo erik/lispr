@@ -15,7 +15,15 @@ module Lispr
           begin
             exprs = Reader.new(input).read
             exprs.each do |exp|
-              puts exp.eval($scope).to_s
+              print " => "
+              val = exp.eval($scope)
+              if val.is_a?(String)
+                puts "\"#{val.to_s}\""
+              elsif val.nil?
+                puts "nil"
+              else
+                puts val.to_s
+              end
             end
           rescue EOFError => e
             input += gets

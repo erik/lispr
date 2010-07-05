@@ -60,8 +60,16 @@ module Lispr
   comment = lambda { |scope, *args| $scope["nil"]}
   $scope["comment"] = comment
 
-  quote = lambda {|scope, first| first }
+  quote = lambda { |scope, first, *rest| first }
   $scope["quote"] = quote
+
+  list = lambda { |scope, *args|
+    tmp = []
+    args.each {|x| tmp << x.eval(scope)}
+    tmp << []
+    List.new tmp
+  }
+  $scope["list"] = list
 
   #TODO: make def work on a local scope rather than global!
   def_ = lambda { |scope, symbol, value| $scope[symbol.to_s] = value.eval(scope)}
@@ -74,6 +82,19 @@ module Lispr
 
   float = lambda { |scope, value| Float(value.eval(scope).value) }
   $scope["float"] = float
+
+  str = lambda {|scope, *values|
+    val = ""
+    values.each{|str| val << str.eval(scope).to_s }
+    val
+  }
+  $scope["str"] = str
+
+  ruby = lambda { |scope, value|
+    raise "String expected as argument!" unless value.eval(scope).is_a?(String)
+    eval value.eval(scope).to_s
+  }
+  $scope["ruby"] = ruby
 
 end
 

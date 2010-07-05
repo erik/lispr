@@ -1,4 +1,4 @@
-#TODO: LispString is busted
+#TODO: Escapes don't work
 
 require 'lispr/command_line'
 require 'lispr/reader'
