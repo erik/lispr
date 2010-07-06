@@ -6,7 +6,9 @@ module Lispr
 
     def initialize(source)
       @line_num = 1
-      @source   = source
+      #At the risk of looking stupid, figure out why the hell this works!
+      @source   = source + "\n" * source.length
+
       @index    = 0
     end
 
@@ -33,14 +35,13 @@ module Lispr
     alias push unshift
     alias prev unshift
 
-    def read
+    def read(single=false)
       expr = []
-      while @index < @source.size - 1
+      while @index < @source.length - 1
 
         #skip over whitespace
         if self.current =~ @@ws
           @line_num += 1 if self.current == "\n"
-          next
 
         #skip over comments
         elsif self.current == ";"
@@ -71,7 +72,7 @@ module Lispr
 
         elsif self.current == "'"
           self.shift
-          expr << List.new([] << LispSymbol.new("quote") << self.read_symbol)
+          expr << List.new(Array[LispSymbol.new("quote"), *self.read(true)])
 
         #everything else is a symbol
         else
@@ -79,6 +80,7 @@ module Lispr
         end
 
         self.shift
+        return expr if single
       end
       return expr
     end
@@ -114,7 +116,7 @@ module Lispr
 
         elsif self.current == "'"
           self.shift
-          expr << List.new([] << LispSymbol.new("quote") << self.read_symbol)
+          expr << List.new(Array[LispSymbol.new("quote"), *self.read(true)])
 
         else
           expr << self.read_symbol

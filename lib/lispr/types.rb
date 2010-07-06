@@ -39,6 +39,7 @@ module Lispr
     #(1 (2 (3)))  == List.new [1, List.new([2, List.new([3]) ])]
     def initialize (value)
       @value = value
+      @value << [] if @value[-1] != []
     end
 
     def car
