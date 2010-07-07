@@ -26,6 +26,7 @@ module Lispr
               end
             end
           rescue EOFError => e
+            raise e if e.message =~ /^eval:/
             input += gets
             retry
           end

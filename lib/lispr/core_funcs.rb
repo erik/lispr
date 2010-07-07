@@ -97,6 +97,22 @@ module Lispr
   $scope["cdr"]   = cdr
   $scope["rest"]  = cdr
 
+  #(eval "(+ 1 2) (+ 4 2)") will return 3, not [3, 6] or anything like that
+  #it only evaluates the first expression, and returns that
+
+  #Possibly take Clojure's approach of read-string to create an object from a
+  #string and eval to evaluate it?
+  eval = lambda {|scope, string| 
+    begin
+      exprs = Lispr::Reader.new(string.to_s + "\n").read
+      exprs[0].eval(scope)
+    rescue Exception => e
+      raise e.class, "eval: #{e.message}"
+    end
+  }
+  $scope["eval"]  = eval
+
+
   #TODO: make def work on a local scope rather than global!
   def_ = lambda { |scope, symbol, value| $scope[symbol.to_s] = value.eval(scope)}
   $scope["def"]  = def_
