@@ -130,6 +130,16 @@ module Lispr
       end
     end
 
+    def eql? scope, other
+      val = self.eval(scope)
+      oth = other.eval(scope)
+      begin
+        return val.value == oth.value
+      rescue Exception => e
+        return val.to_s == oth
+      end
+    end
+
   end
 
   class LispNumeric
