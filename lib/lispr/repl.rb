@@ -1,8 +1,11 @@
 require 'lispr/reader'
 require 'lispr/version'
+require 'readline'
+
 module Lispr
   class REPL
     def initialize(prompt='lispr> ')
+      @tty_save = `stty -g`.chomp
       @prompt = prompt
     end
 
@@ -10,8 +13,7 @@ module Lispr
       puts "lispr v#{::Lispr::VERSION}"
       while true
         begin
-          print @prompt
-          input = gets
+          input = Readline.readline(@prompt, true)
           begin
             exprs = Reader.new(input).read
             exprs.each do |exp|
@@ -27,7 +29,7 @@ module Lispr
             end
           rescue EOFError => e
             raise e if e.message =~ /^eval:/
-            input += gets
+            input += Readline.readline('', true)
             retry
           end
         rescue Exception => e
@@ -38,6 +40,7 @@ module Lispr
             puts  "#{e.message}"
             next
           end
+          system('stty', @tty_save)
           raise e unless e.is_a?(SignalException)
           exit 0
         end
