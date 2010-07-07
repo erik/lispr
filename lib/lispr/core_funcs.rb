@@ -86,17 +86,13 @@ module Lispr
   $scope["puts"] = puts_
 
   car = lambda { |scope, value|
-    val = value.eval(scope)
-    return $scope["nil"] if (val.nil? or val.eql?(scope, LispSymbol.new("nil")))
-    val.car
+   value.eval(scope).car
   }
   $scope["car"]   = car
   $scope["first"] = car
 
   cdr = lambda {|scope, value|
-    val = value.eval(scope)
-    return $scope["nil"] if (val.nil? or val.eql?(scope, LispSymbol.new("nil")))
-    val.cdr
+    value.eval(scope).cdr
   }
   $scope["cdr"]   = cdr
   $scope["rest"]  = cdr
