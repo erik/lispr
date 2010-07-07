@@ -28,8 +28,9 @@ module Lispr
   $scope["*"]    = mul
 
   div = lambda do |scope, first, *rest|
-    return 1/first if rest.size == 0
-    return rest.each.inject(LispNumeric.new first) {|x, t| x.eval(scope) / t.eval(scope)}
+    return 1/first.eval(scope) if rest.size == 0
+    return rest.each.inject(LispNumeric.new first.eval(scope)) \
+     {|x, t| x.eval(scope) / t.eval(scope)}
   end
   $scope["/"]    = div
 
