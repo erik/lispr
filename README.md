@@ -10,7 +10,7 @@ It was a great help in getting a working draft produced fairly quickly.
 
 
 As of now, there are still a bunch of things to implement, such as macros,
-lambdas and a standard library for instance. Besides that, it is working however
+and a standard library for instance. Besides that, it is working however
 and you can use it for great profit.
 
 ##Examples

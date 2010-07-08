@@ -113,7 +113,9 @@ module Lispr
   $scope["eval"]  = eval
 
   lambda_ = lambda {|scope, bindings, body|
-    Lambda.new(bindings, body)
+    lam = Lambda.new(bindings, body)
+    return lam.eval(scope)
+    
   }
   $scope["fn"]     = lambda_
   $scope["lambda"] = lambda_
@@ -144,6 +146,11 @@ module Lispr
     eval value.eval(scope).to_s
   }
   $scope["ruby"] = ruby
+
+  inspect = lambda {|scope, value|
+    value.eval(scope).inspect
+  }
+  $scope["inspect"] = inspect
 
 end
 
