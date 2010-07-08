@@ -13,6 +13,9 @@ As of now, there are still a bunch of things to implement, such as macros,
 and a standard library for instance. Besides that, it is working however
 and you can use it for great profit.
 
+##Usage
+
+
 ##Examples
 Check out lib/lispr/core_funcs.rb for other functions
 
@@ -32,6 +35,12 @@ Comparing classes of objects:
 
         (= (class 42) (class (* 4 2)))
             => true
+
+Using Lambdas:
+
+        (def adder (fn (x) (+ x 1)))
+        (adder 2)
+            => 3
 
 Danger, Will Robinson!
 

@@ -72,6 +72,11 @@ module Lispr
       if @options[:interative] || (not file_name)
         Lispr::REPL.new().repl unless @options[:prompt]
         Lispr::REPL.new(@options[:prompt]).repl if @options[:prompt]
+
+      else
+        Lispr::Reader.new(IO.read(file_name)).read.each {|exp|
+          exp.eval($scope)
+        }
       end
 
     end

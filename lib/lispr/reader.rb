@@ -60,6 +60,7 @@ module Lispr
 
         #read a string
         elsif self.current == '"'
+          puts "WARNING: Using . in lists is depreciated and will be removed"
           expr << self.read_string
 
         #read an int or floating point
@@ -73,6 +74,7 @@ module Lispr
         elsif self.current == "'"
           self.shift
           expr << List.new(Array[LispSymbol.new("quote"), *self.read(true)])
+          self.unshift
 
         #everything else is a symbol
         else
@@ -88,10 +90,10 @@ module Lispr
     def read_list
       expr = []
       proper = true
-      while self.shift != ')'
+      until self.shift == ')'
         if self.current =~ @@ws
           @line_num += 1 if self.current == "\n"
-          next
+          next 
 
         elsif self.current == ';'
           while self.shift !=  "\n"
@@ -109,6 +111,7 @@ module Lispr
           expr << self.read_num
 
         elsif self.current == '.'
+          puts "WARNING: Using . in lists is depreciated and will be removed"
           proper = false
 
         elsif self.current == ':'
@@ -117,6 +120,7 @@ module Lispr
         elsif self.current == "'"
           self.shift
           expr << List.new(Array[LispSymbol.new("quote"), *self.read(true)])
+          self.unshift
 
         else
           expr << self.read_symbol
@@ -140,7 +144,7 @@ module Lispr
 
     def read_num
       num = self.current
-      until self.shift =~ /[)]|#{@@ws}/
+      until self.shift =~ /[()]|#{@@ws}/
         num << self.current
       end
       self.unshift
@@ -150,7 +154,7 @@ module Lispr
 
     def read_symbol
       sym = self.current
-      until self.shift =~ /[)]|#{@@ws}/
+      until self.shift =~ /[()]|#{@@ws}/
         sym += self.current
       end
       self.unshift
@@ -160,7 +164,7 @@ module Lispr
 
     def read_keyword
       keyword = ""
-      until self.shift =~ /[)]|#{@@ws}/
+      until self.shift =~ /[()]|#{@@ws}/
         keyword += self.current
       end
       self.unshift
