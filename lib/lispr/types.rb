@@ -216,6 +216,7 @@ module Lispr
     end
 
     def to_s
+      "(fn #{@bindings.to_s} #{@body.to_s})"
     end
   end
 end
