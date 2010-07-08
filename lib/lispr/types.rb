@@ -1,5 +1,8 @@
-module Lispr
+#opening up some classes to add a value method
+class TrueClass; def value; true; end; end
+class FalseClass; def value; false; end; end
 
+module Lispr
   module Generic
     attr_reader :value
     def eql? scope, other
