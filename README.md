@@ -14,7 +14,18 @@ and a standard library for instance. Besides that, it is working however
 and you can use it for great profit.
 
 ##Usage
+        Usage bin/lispr [options] [file]
+    -v, --version                    Display version an exit
+    -i, --interactive [prompt]        Start a REPL, optionally specifying a prompt
+    -?, -h, --help                   Display this help message
+    -t, --trace                      Provide more specific errors
+    -e, --evaluate code              Evaluate a single line of code
 
+If you run Lispr without specifying a file, it will just open up a REPL. You can
+run a REPL explicitly with the `-i [prompt]` switch.
+
+Right now, file evaluation is pretty rudimentary, and will be fleshed out in the
+future
 
 ##Examples
 Check out lib/lispr/core_funcs.rb for other functions

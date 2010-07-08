@@ -19,7 +19,7 @@ module Lispr
           exit 0
         end
 
-        opts.on("-i [prompt]", "--interative [prompt]",
+        opts.on("-i [prompt]", "--interactive [prompt]",
           "Start a REPL, optionally specifying a prompt") do |prompt|
             @options[:prompt]       = prompt
             @options[:interactive]  = true
