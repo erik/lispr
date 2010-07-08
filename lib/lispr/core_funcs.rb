@@ -112,8 +112,15 @@ module Lispr
   }
   $scope["eval"]  = eval
 
+  lambda_ = lambda {|scope, bindings, body|
+    Lambda.new(bindings, body)
+  }
+  $scope["fn"]     = lambda_
+  $scope["lambda"] = lambda_
+
 
   #TODO: make def work on a local scope rather than global!
+  #lies! def is always global!
   def_ = lambda { |scope, symbol, value| $scope[symbol.to_s] = value.eval(scope)}
   $scope["def"]  = def_
 

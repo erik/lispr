@@ -181,5 +181,42 @@ module Lispr
       self
     end
   end
+
+  class Lambda
+    include Generic
+    
+    def initialize(bindings, body)
+      @bindings = bindings
+      @body     = body
+    end
+
+    def eval(scope)
+      self
+    end
+
+    #(fn (x y) (+ x y))
+    def call(scope, *args)
+      #local scope
+      local = Scope.new(scope)
+
+      bind_ctr = 0
+      arg_ctr  = 0
+
+      #this needs to be removed to allow arity!
+      raise "Expected #{@bindings.value.length - 1} arguments, " +
+        "but got #{args.length}" if @bindings.value.length - 1 != args.length
+
+      while bind_ctr < @bindings.value.length - 1 and arg_ctr <  args.length 
+        local[@bindings.value[bind_ctr].value] = args[arg_ctr].eval(scope)
+        bind_ctr += 1
+        arg_ctr += 1
+      end
+
+      @body.eval(local)
+    end
+
+    def to_s
+    end
+  end
 end
 
