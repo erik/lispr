@@ -83,7 +83,12 @@ module Lispr
 
         elsif self.current == '~'
           self.shift
-          expr << List.new(Array[LispSymbol.new("unquote"), *self.read(true)])
+          if self.current != '@'
+            expr << List.new(Array[LispSymbol.new("unquote"), *self.read(true)])
+          else
+            self.shift
+            expr << List.new(Array[LispSymbol.new("unquote-splice"), *self.read(true)])
+          end
           self.unshift
 
         #everything else is a symbol
@@ -139,7 +144,12 @@ module Lispr
 
         elsif self.current == '~'
           self.shift
-          expr << List.new(Array[LispSymbol.new("unquote"), *self.read(true)])
+          if self.current != '@'
+            expr << List.new(Array[LispSymbol.new("unquote"), *self.read(true)])
+          else
+            self.shift
+            expr << List.new(Array[LispSymbol.new("unquote-splice"), *self.read(true)])
+          end
           self.unshift
 
         else

@@ -120,31 +120,103 @@ module Lispr
   $scope["fn"]     = lambda_
   $scope["lambda"] = lambda_
 
-  macro = lambda {|scope, bindings, body|
+  macro = lambda {|scope, bindings, *body|
     mac = Macro.new(bindings, body)
   }
   $scope["macro"] = macro
 
-  backquote = lambda {|scope, val|
-    return val unless val.is_a?(List)
+  backquote = lambda {|scope, expr|
 
-    list = []
-    val.value.each {|elem|
-      unless elem.is_a?(List)
-        list << elem
-        next
+  #FLAWED strategy, but may prove helpful
+    #val.value.flatten!
+    #return val unless val.is_a?(List)
+    #list = []
+    #ctr = 0
+    #while ctr < val.value.length
+    #  if val.value[ctr] == []
+    #    ctr += 1
+    #    next
+    #  end
+    #  elem = val.value[ctr]
+    #
+    #  unless elem.is_a?(List)
+    #    if elem.value == "unquote" or elem.value == "unquote-splice"
+#          elem = List.new([elem, val.value[ctr += 1]])
+#          puts elem.inspect
+#        else
+#          list << elem
+#          ctr += 1
+#          next
+#        end
+#      end
+#      if elem.car.value == "unquote"
+#        list << elem.cdr.car.eval(scope)
+
+#      elsif elem.car.value == "unquote-splice"
+#        eval = elem.cdr.car.eval(scope)
+#        raise "unquote-splice expects a List, but got a #{eval.class}" unless \
+#          eval.is_a?(List)
+#        eval.value.each {|val|
+#          list << val unless val == []
+#        }         
+
+#      else
+
+#        list << backquote[scope, elem] #unless elem.value == []          
+
+#      end
+
+#      break if val == []
+
+
+#      ctr += 1
+#    end      
+#    
+#    retval = List.new(list.flatten) if list.flatten.size != 1
+#    retval = list[0] if list.flatten.size == 1
+#    puts "RETURNING>#{retval.inspect}"
+#    retval.eval(scope)
+
+    #Working (moreso) strategy, adapted from lispy
+    if expr.class != List:
+        return expr
       end
-
-      if elem.car.value == "unquote"
-        list << elem.cdr.value[0].eval(scope)
-
-      elsif elem.car.value == "unquote-splice"
-        puts "FIXME: UNQUOTE-SPLICE!"      
+    new = []
+    ctr = 0
+    while ctr < expr.value.length
+      exp = expr.value[ctr]
+      break if exp == []
+      unless exp.is_a?(List)
+        if exp.value == "unquote" or exp.value == "unquote-splice"
+          exp = expr.value[ctr += 1].eval(scope)
+          puts exp.inspect
+        else
+          new << exp
+          ctr += 1
+          next
+        end
+      end
+      puts exp.inspect
+      if exp.class == List:
+        if exp.car.value == "unquote"
+          new << exp.cdr.car.eval(scope)
+        elsif exp.car.value == "unquote-splice"
+          l = exp.cdr.car.eval(scope)
+          for i in l.value[0...-1]:
+            new << i
+          end
+        else
+          puts exp.inspect
+          new << backquote.call(scope, List.new([exp]))               
+        end
       else
-        list << elem
+        new << exp
       end
-    }
-    List.new(list)
+      
+      ctr += 1
+    end
+    return List.new(new) if new.flatten.length != 1
+    new[0]
   }
   $scope["backquote"] = backquote
 

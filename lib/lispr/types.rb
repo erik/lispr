@@ -73,11 +73,12 @@ module Lispr
     def eval(scope)
       if @value.size == 0 or @value == [[]]
         LispSymbol.new "nil"
-      elsif @value[-1] != []
-        self.car.eval(scope).call(scope, self.cdr)
+
       else
-        cdr = self.cdr.value[0..-1]
-        self.car.eval(scope).call(scope, *self.cdr.value[0..-1].flatten)
+
+        a = self.car.eval(scope).call(scope, *self.cdr.value[0...-1])
+        a
+
       end
     end
 
@@ -96,6 +97,7 @@ module Lispr
       return @value.to_s unless @value.nil?
       "nil"
     end
+
 
     def eval(scope)
      scope[@value]
@@ -221,9 +223,32 @@ module Lispr
   end
 
   class Macro < Lambda
+
     def call(scope, *args)
-      super.eval(scope)      
-    end
+      puts "called with #{args}"
+      #local scope
+      local = Scope.new(scope)
+
+      bind_ctr = 0
+      arg_ctr  = 0
+      #this needs to be removed to allow arity!
+      raise "Expected #{@bindings.value.length - 1} arguments, " +
+        "but got #{args.length}" if @bindings.value.length - 1 != args.length
+
+      while bind_ctr < @bindings.value.length - 1 and arg_ctr <  args.length 
+        local[@bindings.value[bind_ctr].value] = args[arg_ctr]
+        bind_ctr += 1
+        arg_ctr += 1
+      end
+      @body.flatten!
+
+     @body.each {|exp|
+        exp.eval(local)
+      }
+      @body[-1].eval(local).eval(scope)
+    end   
+
+    alias [] call   
 
     def to_s
       "(macro #{@bindings.to_s} #{@body.to_s})"
