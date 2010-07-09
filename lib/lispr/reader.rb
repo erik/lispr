@@ -60,7 +60,6 @@ module Lispr
 
         #read a string
         elsif self.current == '"'
-          puts "WARNING: Using . in lists is depreciated and will be removed"
           expr << self.read_string
 
         #read an int or floating point

@@ -189,14 +189,14 @@ module Lispr
       unless exp.is_a?(List)
         if exp.value == "unquote" or exp.value == "unquote-splice"
           exp = expr.value[ctr += 1].eval(scope)
-          puts exp.inspect
+
         else
           new << exp
           ctr += 1
           next
         end
       end
-      puts exp.inspect
+
       if exp.class == List:
         if exp.car.value == "unquote"
           new << exp.cdr.car.eval(scope)
@@ -206,8 +206,7 @@ module Lispr
             new << i
           end
         else
-          puts exp.inspect
-          new << backquote.call(scope, List.new([exp]))               
+          new << backquote.call(scope, exp)               
         end
       else
         new << exp

@@ -7,6 +7,7 @@ module Lispr
     def initialize(prompt='lispr> ')
       @tty_save = `stty -g`.chomp
       @prompt = prompt
+
     end
 
     def repl
