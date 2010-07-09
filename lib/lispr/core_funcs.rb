@@ -280,6 +280,15 @@ module Lispr
   }
   $scope["ruby"] = ruby
 
+  call = lambda { |scope, method, class_, *args|
+    array = []
+    args.each {|elem|
+      array << elem.eval(scope).value
+    }
+    class_.eval(scope).send(method.value, *array)
+  }
+  $scope["call"] = call
+
   inspect = lambda {|scope, value|
     value.eval(scope).inspect
   }

@@ -34,4 +34,17 @@
     false
     true))
 
+;;lists
+(defn second (l)
+  (first (rest l)))
+(defn third (l)
+  (first (rest (rest l))))
+
+;;Ruby interop
+
+;;until & is implemented, args should be a list:
+;;(new Array (3, "2"))
+;;  => ["2", "2", "2"]
+(defmacro new (class,  args)
+  `(call new ~class ~@args))
 
