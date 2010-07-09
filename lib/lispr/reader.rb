@@ -2,7 +2,7 @@
 
 module Lispr
   class Reader
-    @@ws = /\s+/
+    @@ws = /\s+|,/
 
     def initialize(source)
       @line_num = 1
