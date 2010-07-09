@@ -153,6 +153,14 @@ module Lispr
   def_ = lambda { |scope, symbol, value| $scope[symbol.to_s] = value.eval(scope)}
   $scope["def"]  = def_
 
+  do_ = lambda {|scope, *args|
+    args[0...-1].each {|exp|
+      exp.eval(scope)
+    }
+    args[-1].eval(scope)
+  }
+  $scope["do"] = do_
+
   #cast to Ruby classes
 
   int = lambda { |scope, value| Integer(value.eval(scope).value) }
