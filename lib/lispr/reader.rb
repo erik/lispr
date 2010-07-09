@@ -76,6 +76,16 @@ module Lispr
           expr << List.new(Array[LispSymbol.new("quote"), *self.read(true)])
           self.unshift
 
+        elsif self.current == "`"
+          self.shift
+          expr << List.new(Array[LispSymbol.new("backquote"), *self.read(true)])
+          self.unshift
+
+        elsif self.current == '~'
+          self.shift
+          expr << List.new(Array[LispSymbol.new("unquote"), *self.read(true)])
+          self.unshift
+
         #everything else is a symbol
         else
           expr << self.read_symbol
@@ -120,6 +130,16 @@ module Lispr
         elsif self.current == "'"
           self.shift
           expr << List.new(Array[LispSymbol.new("quote"), *self.read(true)])
+          self.unshift
+          
+        elsif self.current == "`"
+          self.shift
+          expr << List.new(Array[LispSymbol.new("backquote"), *self.read(true)])
+          self.unshift
+
+        elsif self.current == '~'
+          self.shift
+          expr << List.new(Array[LispSymbol.new("unquote"), *self.read(true)])
           self.unshift
 
         else

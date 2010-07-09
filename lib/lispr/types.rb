@@ -219,5 +219,15 @@ module Lispr
       "(fn #{@bindings.to_s} #{@body.to_s})"
     end
   end
+
+  class Macro < Lambda
+    def call(scope, *args)
+      super.eval(scope)      
+    end
+
+    def to_s
+      "(macro #{@bindings.to_s} #{@body.to_s})"
+    end
+  end
 end
 

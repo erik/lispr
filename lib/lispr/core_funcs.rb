@@ -120,6 +120,33 @@ module Lispr
   $scope["fn"]     = lambda_
   $scope["lambda"] = lambda_
 
+  macro = lambda {|scope, bindings, body|
+    mac = Macro.new(bindings, body)
+  }
+  $scope["macro"] = macro
+
+  backquote = lambda {|scope, val|
+    return val unless val.is_a?(List)
+
+    list = []
+    val.value.each {|elem|
+      unless elem.is_a?(List)
+        list << elem
+        next
+      end
+
+      if elem.car.value == "unquote"
+        list << elem.cdr.value[0].eval(scope)
+
+      elsif elem.car.value == "unquote-splice"
+        puts "FIXME: UNQUOTE-SPLICE!"      
+      else
+        list << elem
+      end
+    }
+    List.new(list)
+  }
+  $scope["backquote"] = backquote
 
   #TODO: make def work on a local scope rather than global!
   #lies! def is always global!
