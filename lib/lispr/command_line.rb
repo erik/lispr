@@ -68,7 +68,6 @@ module Lispr
 
     def process_result
       core = Reader.new(IO.read(File.dirname(__FILE__) + "/core.lisp")).read
-      puts core.inspect
       core.each {|exp|
         exp.eval($scope)
       }

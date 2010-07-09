@@ -225,7 +225,6 @@ module Lispr
   class Macro < Lambda
 
     def call(scope, *args)
-      puts "called with #{args}"
       #local scope
       local = Scope.new(scope)
 

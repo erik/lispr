@@ -232,6 +232,26 @@ module Lispr
   }
   $scope["do"] = do_
 
+  cond = lambda {|scope, *args|
+    return $scope["nil"] if args.size == 0
+    array = []
+
+    #partition args into blocks of 2
+    args.each_with_index do |x, i|
+      array << [] if i % 2 == 0
+      array.last << x
+    end
+    retval = $scope["nil"]
+    array.each {|pred, val|
+      if pred.eval(scope).value
+        retval = val.eval(scope)
+        break
+      end
+    }
+    return retval
+  }
+  $scope["cond"] = cond
+
   cons = lambda {|scope, value, list|
     raise "cons expects a list, but got #{list.eval(scope).class}" \
      unless list.eval(scope).is_a?(List)
