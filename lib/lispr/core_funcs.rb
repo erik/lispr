@@ -161,6 +161,13 @@ module Lispr
   }
   $scope["do"] = do_
 
+  cons = lambda {|scope, value, list|
+    raise "cons expects a list, but got #{list.eval(scope).class}" \
+     unless list.eval(scope).is_a?(List)
+    List.new([value.eval(scope)] << list.eval(scope).value)
+  }
+  $scope["cons"] = cons
+
   #cast to Ruby classes
 
   int = lambda { |scope, value| Integer(value.eval(scope).value) }

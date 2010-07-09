@@ -67,7 +67,7 @@ module Lispr
 
     def to_s
       return '()' if @value.size == 0 or @value == [[]]
-      str = '(' + @value[0...-1].each {|x| x.to_s}.join(' ') + ')'
+      str = '(' + @value[0...-1].each {|x| x.to_s}.join(' ').rstrip + ')'
     end
 
     def eval(scope)
