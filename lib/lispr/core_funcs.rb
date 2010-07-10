@@ -258,6 +258,31 @@ module Lispr
     List.new([value.eval(scope)] << list.eval(scope).value)
   }
   $scope["cons"] = cons
+  
+  #(let (x 1, y 2) (puts x) (puts y))
+  let = lambda {|scope, binds, *body|
+    local = Scope.new(scope)
+    bindings = []
+
+    #partition args into blocks of 2
+    binds.value.each_with_index do |x, i|
+      bindings << [] if i % 2 == 0
+      bindings.last << x
+    end
+
+    bindings.each {|sym, val|
+      next if val == [] or sym == []
+      raise "Must bind to a symbol! Got: #{sym.inspect}" unless sym.is_a?(LispSymbol)
+      local[sym.value] = val.eval(scope)
+    }
+
+    body[0...-1].each {|exp|
+      exp.eval(local)
+    }
+    #return last element of body
+    body[-1].eval(local)
+  }
+  $scope["let"] = let
 
   #cast to Ruby classes
 
@@ -288,11 +313,6 @@ module Lispr
     class_.eval(scope).send(method.value, *array)
   }
   $scope["call"] = call
-
-  inspect = lambda {|scope, value|
-    value.eval(scope).inspect
-  }
-  $scope["inspect"] = inspect
 
 end
 

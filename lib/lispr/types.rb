@@ -114,6 +114,10 @@ module Lispr
       "#{@value}"
     end
 
+    def inspect
+      "#<#{self.class} @value=#{@value.inspect}>"
+    end
+
     def eval(scope)
       self
     end

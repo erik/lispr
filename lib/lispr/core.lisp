@@ -1,5 +1,7 @@
 ;; Standard library functions
 
+(def *lispr-version* (ruby "Lispr::VERSION"))
+
 ;;need to allow unquote splicing here
 (def defmacro (macro (n a  b) `(def ~n (macro ~a ~b))))
 (defmacro defn (name args body) `(def ~name (fn ~args ~body)))
@@ -31,6 +33,8 @@
 (defmacro not (x)
  `(if ~x false true))
 
+(defmacro when (test, body)
+ `(if ~test ~body nil))
 
 ;;Numbers
 (defn inc (num) (+ num 1))
@@ -74,3 +78,6 @@
 ;; require a Ruby file
 (defmacro require (file)
   `(call require Kernel ~file))
+
+(defmacro inspect (object)
+  `(call inspect ~object))
