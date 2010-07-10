@@ -9,6 +9,29 @@
   ~test ~t
    :else ~f))
 
+(defmacro and (x y)
+ `(if ~x 
+    (if ~y 
+        true
+        false)
+    false))
+    
+(defmacro or (x y)
+ `(cond 
+    ~x true
+    ~y true
+    :else false))
+
+(defmacro xor (x y)
+ `(cond 
+    ~x (if ~y false true)
+    ~y (if ~x false true)
+    :else false))
+
+(defmacro not (x)
+ `(if ~x false true))
+
+
 ;;Numbers
 (defn inc (num) (+ num 1))
 (defn dec (num) (- num 1))

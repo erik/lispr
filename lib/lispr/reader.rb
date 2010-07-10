@@ -95,7 +95,6 @@ module Lispr
 
         #ruby method call
         elsif self.current == '#'
-#          self.shift
           expr << LispSymbol.new("call")
 
         #everything else is a symbol
@@ -161,7 +160,6 @@ module Lispr
 
         #ruby method call
         elsif self.current == '#'
-         # self.shift
           expr << LispSymbol.new("call")
 
         else
