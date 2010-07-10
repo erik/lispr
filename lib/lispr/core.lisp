@@ -48,3 +48,6 @@
 (defmacro new (class,  args)
   `(call new ~class ~@args))
 
+;; require a Ruby file
+(defmacro require (file)
+  `(call require Kernel ~file))

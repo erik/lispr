@@ -23,6 +23,7 @@ module Lispr
               if val.is_a?(String)
                 puts "\"#{val.to_s}\""
               elsif val.nil?
+                puts "nil"
               #because [].to_s returns "" and [].inspect returns "[]"
               elsif val.is_a?(Array)
                 puts val.inspect

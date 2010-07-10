@@ -70,16 +70,19 @@ module Lispr
         elsif self.current == ':'
           expr << self.read_keyword
 
+        #quote
         elsif self.current == "'"
           self.shift
           expr << List.new(Array[LispSymbol.new("quote"), *self.read(true)])
           self.unshift
 
+        #backquote
         elsif self.current == "`"
           self.shift
           expr << List.new(Array[LispSymbol.new("backquote"), *self.read(true)])
           self.unshift
 
+        #unquote
         elsif self.current == '~'
           self.shift
           if self.current != '@'
@@ -89,6 +92,11 @@ module Lispr
             expr << List.new(Array[LispSymbol.new("unquote-splice"), *self.read(true)])
           end
           self.unshift
+
+        #ruby method call
+        elsif self.current == '#'
+#          self.shift
+          expr << LispSymbol.new("call")
 
         #everything else is a symbol
         else
@@ -150,6 +158,11 @@ module Lispr
             expr << List.new(Array[LispSymbol.new("unquote-splice"), *self.read(true)])
           end
           self.unshift
+
+        #ruby method call
+        elsif self.current == '#'
+         # self.shift
+          expr << LispSymbol.new("call")
 
         else
           expr << self.read_symbol
