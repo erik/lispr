@@ -92,7 +92,9 @@
 (defn third (l)
   (first (rest (rest l))))
 (defn nth (coll index)
-  (#[] (#flatten (#value coll)) index))
+  (#[] (#flatten coll) index))
+(defn count (coll)
+  (#count coll))
 
 ;;Ruby interop
 
@@ -108,3 +110,6 @@
 
 (defmacro inspect (object)
   `(call inspect ~object))
+
+(defmacro chr (i)
+  `(call chr (int ~i)))

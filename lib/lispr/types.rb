@@ -1,6 +1,8 @@
 #opening up some classes to add a value method
+class Object; def value; self; end; end
 class TrueClass; def value; true; end; end
 class FalseClass; def value; false; end; end
+class Numeric; def value; self; end; end
 
 module Lispr
   module Generic
@@ -65,6 +67,14 @@ module Lispr
       end
     end
 
+    def count
+      LispNumeric.new @value.flatten.length
+    end
+
+    def flatten
+      @value.flatten
+    end
+
     def to_s
       return '()' if @value.size == 0 or @value == [[]]
       str = '(' + @value[0...-1].each {|x| x.to_s}.join(' ').rstrip + ')'
@@ -76,9 +86,7 @@ module Lispr
 
       else
 
-        a = self.car.eval(scope).call(scope, *self.cdr.value[0...-1])
-        a
-
+        self.car.eval(scope).call(scope, *self.cdr.value[0...-1])
       end
     end
 
@@ -120,6 +128,14 @@ module Lispr
 
     def eval(scope)
       self
+    end
+
+    def count
+      LispNumeric.new @value.length
+    end
+
+    def flatten
+      @value
     end
 
     def car
