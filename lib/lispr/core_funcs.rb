@@ -284,6 +284,50 @@ module Lispr
   }
   $scope["let"] = let
 
+  loop_ = lambda {|scope, binds, *body|
+    local = Scope.new(scope)
+    bindings = []
+    
+
+    #partition args into blocks of 2
+    binds.value.each_with_index do |x, i|
+      bindings << [] if i % 2 == 0
+      bindings.last << x
+    end
+
+    bindings.each {|sym, val|
+      next if val == [] or sym == []
+      raise "Must bind to a symbol! Got: #{sym.inspect}" unless sym.is_a?(LispSymbol)
+      local[sym.value] = val.eval(local)
+    }
+    
+    local["recur"] = lambda {|s, *bi|
+      ctr = 0
+      bindings.each {|sym, _|
+        next if sym == []
+        raise "recur given too few values! Got #{bi.flatten.length}," + 
+          " needed #{bindings[0...-1].length}" unless ctr  < bi.flatten.length
+        local[sym.value] = bi[ctr].eval(local)
+        ctr += 1
+      }
+
+      raise "recur given too many values! Got #{bi.flatten.length}," +
+        " needed #{bindings[0...-1].length}" unless (ctr ) == bi.flatten.length
+        
+      body[0...-1].each {|exp|
+        exp.eval(local)
+      }
+      return body[-1].eval(local)
+    }
+
+    body[0...-1].each {|exp|
+      exp.eval(local)
+    }
+    #return last element of body
+    body[-1].eval(local)          
+  }
+  $scope["loop"] = loop_
+
   nil_ = lambda {|scope, expr|
     eval = expr.eval(scope)
     return true if eval.nil?

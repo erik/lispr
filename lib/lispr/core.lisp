@@ -5,6 +5,8 @@
 ;;need to allow unquote splicing here
 (def defmacro (macro (n a  b) `(def ~n (macro ~a ~b))))
 (defmacro defn (name args body) `(def ~name (fn ~args ~body)))
+;(alias new old)
+(defmacro alias (new old) `(def ~new ~old))
 
 (defmacro if (test t f)
  `(cond
@@ -55,7 +57,7 @@
 ;;apply cannot be implemented until & is!
 ;;(defmacro apply (func coll))
   
-    
+
 ;;Numbers
 (defn inc (num) (+ num 1))
 (defn dec (num) (- num 1))
@@ -89,12 +91,23 @@
 ;;lists
 (defn second (l)
   (first (rest l)))
+  
 (defn third (l)
   (first (rest (rest l))))
+  
 (defn nth (coll index)
   (#[] (#flatten coll) index))
+  
 (defn count (coll)
   (#count coll))
+  
+(defmacro some? (pred coll) 
+ `(if (nil? ~coll)
+     nil
+     (if (~pred (first ~coll))
+        (first ~coll)
+        (some? ~pred (rest ~coll)))))
+(alias any? some?)
 
 ;;Ruby interop
 
