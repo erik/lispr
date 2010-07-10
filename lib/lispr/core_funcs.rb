@@ -284,6 +284,15 @@ module Lispr
   }
   $scope["let"] = let
 
+  nil_ = lambda {|scope, expr|
+    eval = expr.eval(scope)
+    return true if eval.nil?
+    return true if eval.is_a?(LispSymbol) and eval.value == nil
+    return true if eval.is_a?(List) and eval.value.flatten.empty?
+    false
+  }
+  $scope["nil?"] = nil_
+
   #cast to Ruby classes
 
   int = lambda { |scope, value| Integer(value.eval(scope).value) }

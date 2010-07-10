@@ -11,6 +11,9 @@
   ~test ~t
    :else ~f))
 
+(defmacro unless (test t f)
+ `(if ~test ~f ~t))
+
 (defmacro and (x y)
  `(if ~x 
     (if ~y 
@@ -42,6 +45,16 @@
         ret   ~body)
     (puts (str "Evaluation took " (- (#now Time) start) " seconds"))
     ret))
+
+;; make val optional!
+(defmacro reduce (f val coll)
+ `(unless (nil? ~coll)
+    (reduce ~f (~f ~val (first ~coll)) (rest ~coll))
+    ~val))
+
+;;apply cannot be implemented until & is!
+;;(defmacro apply (func coll))
+  
     
 ;;Numbers
 (defn inc (num) (+ num 1))
@@ -68,11 +81,18 @@
     false
     true))
 
+; floating point random number
+(defn rand () (#rand Kernel))
+; integer random, between 0 (inclusive), n (exclusive)
+(defn rand-int (n) (#rand Kernel n))
+
 ;;lists
 (defn second (l)
   (first (rest l)))
 (defn third (l)
   (first (rest (rest l))))
+(defn nth (coll index)
+  (#[] (#flatten (#value coll)) index))
 
 ;;Ruby interop
 
