@@ -36,6 +36,13 @@
 (defmacro when (test, body)
  `(if ~test ~body nil))
 
+;; measure time taken to evaluate body, returns the result of evaluating body
+(defmacro time (body)
+ `(let (start (#now Time)
+        ret   ~body)
+    (puts (str "Evaluation took " (- (#now Time) start) " seconds"))
+    ret))
+    
 ;;Numbers
 (defn inc (num) (+ num 1))
 (defn dec (num) (- num 1))
