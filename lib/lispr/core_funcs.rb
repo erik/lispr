@@ -219,8 +219,6 @@ module Lispr
   }
   $scope["backquote"] = backquote
 
-  #TODO: make def work on a local scope rather than global!
-  #lies! def is always global!
   def_ = lambda { |scope, symbol, value| $scope[symbol.to_s] = value.eval(scope)}
   $scope["def"]  = def_
 
@@ -285,6 +283,7 @@ module Lispr
   $scope["let"] = let
 
   loop_ = lambda {|scope, binds, *body|
+    #FIXME: a lot of this is just duplicate let code!
     local = Scope.new(scope)
     bindings = []
     
@@ -327,6 +326,43 @@ module Lispr
     body[-1].eval(local)          
   }
   $scope["loop"] = loop_
+
+  try = lambda {|scope, *body|
+    catch_list = []
+    last = nil
+
+    #collect every catch statement into an array
+    body.each {|exp|
+      next unless exp.is_a?(List)
+      catch_list << exp if exp.car.value == "catch"
+    }
+
+    begin
+      body.each {|exp|
+        #don't evaluate catch 
+        next if exp.is_a?(List) and exp.car.value == "catch"
+        last = exp.eval(scope)
+      }
+    rescue Exception => e
+      matched = false
+      retval = nil
+      catch_list.each {|stmt|
+        raise "Malformed catch statement: #{stmt}" unless stmt.count.value == 4
+        dummy, ex_class, var, body = stmt.value
+        if e.is_a?(ex_class.eval(scope))
+          matched = true
+          local = Scope.new(scope)
+          local[var.value] = e
+          retval = body.eval(local)
+          break
+        end
+      }
+      raise e unless matched
+      return retval
+    end
+    last
+  }
+  $scope["try"] = try
 
   nil_ = lambda {|scope, expr|
     eval = expr.eval(scope)

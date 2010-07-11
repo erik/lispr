@@ -5,4 +5,3 @@ $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 require 'lispr/command_line'
 
 Lispr::CommandLine.new(ARGV).parse!
-

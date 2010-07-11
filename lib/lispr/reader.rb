@@ -1,4 +1,3 @@
-#TODO: add support for quote, syntax quote, etc
 
 module Lispr
   class Reader

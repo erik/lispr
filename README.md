@@ -55,6 +55,26 @@ Using Lambdas:
         (def adder (fn (x) (+ x 1)))
         (adder 2)
             => 3
+
+Defining functions:
+
+        (defn greet (name)
+            (puts (str "Hello, " name "!")))
+        (greet "Sam")
+            Hello, Sam!
+            => nil
+
+Cond:
+
+        (def num 42)
+        (cond
+            (pos? num) (puts "pos")
+            (neg? num) (puts "neg")
+            (zero? num) (puts "zero")
+            ; :else (like all keywords) evaluates to true
+            :else (puts "WTF DID YOU DO?"))
+                pos
+                    => nil
             
 Danger, Will Robinson!
 
@@ -107,4 +127,21 @@ make `5, nil` a single argument by passing it as a list. This *will* be changed.
         (puts s)
             Hello, World
             => nil
+
+Exception Handling:
+
+        (try 
+            (/ 42 6)
+            (/ 1 0)
+            (catch TypeError _ (puts "I caught a TypeError"))
+            (catch ZeroDivisionError _ (puts "Oh no! You divided by 0!"))
+            ;this case should be put last, or it will be matched every time!
+            (catch Exception e (puts "I caught a" (class e) "with this message:"
+                                     (#message e))))
+                Oh no! You divided by 0!
+                    => nil
+
+The try block will use the first catch that matches, not the most accurate. If
+no matching block is found, the exception falls through. If no error is thrown,
+try will return the last value evaluated
             
