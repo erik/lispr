@@ -75,16 +75,6 @@ Cond:
             :else (puts "WTF DID YOU DO?"))
                 pos
                     => nil
-            
-Danger, Will Robinson!
-
-        (= (int 1) 1)
-            => false
-        ;because:
-        (class 1)
-            => Lispr::LispNumeric
-        (class (int 1))
-            => Fixnum
  
 This next function will probably be changed in future versions (if not removed
 in favor of something else):
