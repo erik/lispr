@@ -18,7 +18,7 @@ module Lispr
           begin
             exprs = Reader.new(input).read
             exprs.each do |exp|
-              val = exp.eval($scope)
+              val = exp.eval($global[:namespaces][$global[:scope]])
               print " => "
               if val.is_a?(String)
                 puts "\"#{val.to_s}\""

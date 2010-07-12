@@ -2,64 +2,64 @@ require 'lispr/types'
 require 'lispr/scope'
 
 module Lispr
-  $scope = Scope.new
-  $scope["true"]  = LispSymbol.new true
-  $scope["false"] = LispSymbol.new false
-  $scope["nil"]   = LispSymbol.new nil
+  $global = {:namespaces => {:global => Scope.new } ,:scope => :global}
+  $global[:namespaces][:global]["true"]  = LispSymbol.new true
+  $global[:namespaces][:global]["false"] = LispSymbol.new false
+  $global[:namespaces][:global]["nil"]   = LispSymbol.new nil
 
   #Math functions
 
   add = lambda do |scope, *args|
-    return 0 if args.nil? || args.empty? || args == $scope["nil"]
+    return 0 if args.nil? || args.empty? || args == $global[:namespaces][:global]["nil"]
     return args.each.inject(LispNumeric.new 0) {|x, t| x.eval(scope) + t.eval(scope)}
   end
-  $scope["+"]    = add
+  $global[:namespaces][:global]["+"]    = add
 
   sub = lambda do |scope, first, *args|
     return -first if args.size == 0
     return args.each.inject(first) {|x, t| x.eval(scope) - t.eval(scope)}
   end
-  $scope["-"]    = sub
+  $global[:namespaces][:global]["-"]    = sub
 
   mul = lambda do |scope, *args|
     return 1 if args.size == 0
     return args.each.inject(LispNumeric.new 1){|x, t| x.eval(scope) * t.eval(scope)}
   end
-  $scope["*"]    = mul
+  $global[:namespaces][:global]["*"]    = mul
 
   div = lambda do |scope, first, *rest|
     return 1/first.eval(scope) if rest.size == 0
     return rest.each.inject(LispNumeric.new first.eval(scope)) \
      {|x, t| x.eval(scope) / t.eval(scope)}
   end
-  $scope["/"]    = div
+  $global[:namespaces][:global]["/"]    = div
 
   mod = lambda { |scope, first, second| first.eval(scope) % second.eval(scope) }
-  $scope["%"]    = mod
-  $scope["mod"]  = mod
+  $global[:namespaces][:global]["%"]    = mod
+  $global[:namespaces][:global]["mod"]  = mod
 
   eql = lambda{ |scope, first, second| first.eql? scope, second }
-  $scope["="] = eql
+  $global[:namespaces][:global]["="] = eql
 
   lt = lambda { |scope, first, second| first.eval(scope) < second.eval(scope)}
-  $scope["<"]    = lt
+  $global[:namespaces][:global]["<"]    = lt
 
   lte = lambda { |scope, first, second| first.eval(scope) <= second.eval(scope)}
-  $scope["<="]   = lte
+  $global[:namespaces][:global]["<="]   = lte
 
   gt = lambda { |scope, first, second| first.eval(scope) > second.eval(scope)}
-  $scope[">"]    = gt
+  $global[:namespaces][:global][">"]    = gt
 
   gte = lambda { |scope, first, second| first.eval(scope) >= second.eval(scope)}
-  $scope[">="]   = gte
+  $global[:namespaces][:global][">="]   = gte
 
   #standard utility functions
 
-  comment = lambda { |scope, *args| $scope["nil"]}
-  $scope["comment"] = comment
+  comment = lambda { |scope, *args| $global[:namespaces][:global]["nil"]}
+  $global[:namespaces][:global]["comment"] = comment
 
   quote = lambda { |scope, first, *rest| first }
-  $scope["quote"] = quote
+  $global[:namespaces][:global]["quote"] = quote
 
   list = lambda { |scope, *args|
     tmp = []
@@ -67,20 +67,20 @@ module Lispr
     tmp << []
     List.new tmp
   }
-  $scope["list"] = list
+  $global[:namespaces][:global]["list"] = list
 
   print_ = lambda{ |scope, *values|
     values.each{|val| print val.eval(scope).to_s, ' '}
     nil
   }
-  $scope["print"] = print_
+  $global[:namespaces][:global]["print"] = print_
 
   puts_ = lambda { |scope, *values|
     values.each{|val| print val.eval(scope).to_s, ' '}
     puts
     nil
   }
-  $scope["puts"] = puts_
+  $global[:namespaces][:global]["puts"] = puts_
 
   #(eval "(+ 1 2) (+ 4 2)") will return 3, not [3, 6] or anything like that
   #it only evaluates the first expression, and returns that
@@ -95,20 +95,20 @@ module Lispr
       raise e.class, "eval: #{e.message}"
     end
   }
-  $scope["eval"]  = eval
+  $global[:namespaces][:global]["eval"]  = eval
 
   lambda_ = lambda {|scope, bindings, body|
     lam = Lambda.new(bindings, body)
     return lam.eval(scope)
     
   }
-  $scope["fn"]     = lambda_
-  $scope["lambda"] = lambda_
+  $global[:namespaces][:global]["fn"]     = lambda_
+  $global[:namespaces][:global]["lambda"] = lambda_
 
   macro = lambda {|scope, bindings, *body|
     mac = Macro.new(bindings, body)
   }
-  $scope["macro"] = macro
+  $global[:namespaces][:global]["macro"] = macro
 
   backquote = lambda {|scope, expr|
 
@@ -202,10 +202,12 @@ module Lispr
     return List.new(new) if new.flatten.length != 1
     new[0]
   }
-  $scope["backquote"] = backquote
+  $global[:namespaces][:global]["backquote"] = backquote
 
-  def_ = lambda { |scope, symbol, value| $scope[symbol.to_s] = value.eval(scope)}
-  $scope["def"]  = def_
+  def_ = lambda { |scope, symbol, value|
+    $global[:namespaces][$global[:scope]][symbol.to_s] = value.eval(scope)
+   }
+  $global[:namespaces][:global]["def"]  = def_
 
   do_ = lambda {|scope, *args|
     args[0...-1].each {|exp|
@@ -213,10 +215,10 @@ module Lispr
     }
     args[-1].eval(scope)
   }
-  $scope["do"] = do_
+  $global[:namespaces][:global]["do"] = do_
 
   cond = lambda {|scope, *args|
-    return $scope["nil"] if args.size == 0
+    return $global[:namespaces][:global]["nil"] if args.size == 0
     array = []
 
     #partition args into blocks of 2
@@ -224,7 +226,7 @@ module Lispr
       array << [] if i % 2 == 0
       array.last << x
     end
-    retval = $scope["nil"]
+    retval = $global[:namespaces][:global]["nil"]
     array.each {|pred, val|
       if pred.eval(scope).value
         retval = val.eval(scope)
@@ -233,14 +235,14 @@ module Lispr
     }
     return retval
   }
-  $scope["cond"] = cond
+  $global[:namespaces][:global]["cond"] = cond
 
   cons = lambda {|scope, value, list|
     raise "cons expects a list, but got #{list.eval(scope).class}" \
      unless list.eval(scope).is_a?(List)
     List.new([value.eval(scope)] << list.eval(scope).value)
   }
-  $scope["cons"] = cons
+  $global[:namespaces][:global]["cons"] = cons
   
   #(let (x 1, y 2) (puts x) (puts y))
   let = lambda {|scope, binds, *body|
@@ -265,7 +267,7 @@ module Lispr
     #return last element of body
     body[-1].eval(local)
   }
-  $scope["let"] = let
+  $global[:namespaces][:global]["let"] = let
 
   loop_ = lambda {|scope, binds, *body|
     #FIXME: a lot of this is just duplicate let code!
@@ -310,7 +312,7 @@ module Lispr
     #return last element of body
     body[-1].eval(local)          
   }
-  $scope["loop"] = loop_
+  $global[:namespaces][:global]["loop"] = loop_
 
   try = lambda {|scope, *body|
     catch_list = []
@@ -347,7 +349,7 @@ module Lispr
     end
     last
   }
-  $scope["try"] = try
+  $global[:namespaces][:global]["try"] = try
 
   nil_ = lambda {|scope, expr|
     eval = expr.eval(scope)
@@ -356,28 +358,28 @@ module Lispr
     return true if eval.is_a?(List) and eval.value.flatten.empty?
     false
   }
-  $scope["nil?"] = nil_
+  $global[:namespaces][:global]["nil?"] = nil_
 
   #cast to Ruby classes
 
   int = lambda { |scope, value| Integer(value.eval(scope).value) }
-  $scope["int"] = int
+  $global[:namespaces][:global]["int"] = int
 
   float = lambda { |scope, value| Float(value.eval(scope).value) }
-  $scope["float"] = float
+  $global[:namespaces][:global]["float"] = float
 
   str = lambda {|scope, *values|
     val = ""
     values.each{|str| val << str.eval(scope).to_s }
     val
   }
-  $scope["str"] = str
+  $global[:namespaces][:global]["str"] = str
 
   ruby = lambda { |scope, value|
     raise "String expected as argument!" unless value.eval(scope).is_a?(String)
     eval value.eval(scope).to_s
   }
-  $scope["ruby"] = ruby
+  $global[:namespaces][:global]["ruby"] = ruby
 
   call = lambda { |scope, method, class_, *args|
     array = []
@@ -386,7 +388,18 @@ module Lispr
     }
     class_.eval(scope).send(method.value, *array)
   }
-  $scope["call"] = call
+  $global[:namespaces][:global]["call"] = call
 
+  ns = lambda {|scope, *sym|
+    raise ArgumentError, "Wrong number of arguments (#{sym.length} for 1)" \
+      if sym.size > 1
+    sym = sym == [] ? :global : sym[0]
+    raise "ns expects a symbol, but got a #{sym.class}" \
+     unless sym.is_a?(LispSymbol) or sym.is_a?(Symbol)
+    $global[:namespaces][sym.value] = Scope.new scope \
+      unless $global[:namespaces][sym.value]
+    $global[:scope] = sym.value
+  }
+  $global[:namespaces][:global]["ns"] = ns
 end
 

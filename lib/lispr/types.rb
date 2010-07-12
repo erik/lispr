@@ -51,13 +51,13 @@ module Lispr
       if @value.size > 0 and @value != [[]]
         @value[0]
       else
-        $scope["nil"]
+        $global[:namespaces][:global]["nil"]
       end
     end
 
     def cdr
       if @value.size == 0 or @value == [[]]
-        $scope["nil"]
+        $global[:namespaces][:global]["nil"]
 
       elsif @value[-1] == []
         List.new @value[1..-1]
@@ -108,7 +108,20 @@ module Lispr
 
 
     def eval(scope)
-     scope[@value]
+      if @value =~ /\./
+        tmp = @value.split /\./
+        ns  = tmp[0...-1]
+        sym = tmp[-1]
+
+        namespace = $global[:namespaces]
+        ns.each {|n|
+          namespace = namespace[n]
+          raise "Namespace #{n} doesn't exist!" unless namespace
+        }
+        namespace[sym]                
+      else
+        scope[@value]
+      end
     end
   end
 
@@ -142,13 +155,13 @@ module Lispr
       if @value.size > 0
         @value[0].chr
       else
-        $scope["nil"]
+        $global[:namespaces][:global]["nil"]
       end
     end
 
     def cdr
       if @value.size == 0
-        $scope["nil"]
+        $global[:namespaces][:global]["nil"]
 
       else
         LispString.new @value[1..-1]

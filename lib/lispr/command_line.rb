@@ -35,7 +35,8 @@ module Lispr
         end
 
         opts.on("-e code", "--evaluate code", "Evaluate a single line of code") do |code|
-          Lispr::Reader.new(code+"\n").read.each {|x| puts x.eval($scope)}
+          Lispr::Reader.new(code+"\n").read.each {|x| puts x.eval( \
+            $global[:namespaces][$global[:scope]])}
           exit 0
         end
 
@@ -69,7 +70,7 @@ module Lispr
     def process_result
       core = Reader.new(IO.read(File.dirname(__FILE__) + "/core.lisp")).read
       core.each {|exp|
-        exp.eval($scope)
+        exp.eval($global[:namespaces][:global])
       }
       args = @args.dup
       file_name = args.shift
@@ -79,7 +80,7 @@ module Lispr
 
       else
         Lispr::Reader.new(IO.read(file_name)).read.each {|exp|
-          exp.eval($scope)
+          exp.eval($global[:namespaces][:global])
         }
       end
 

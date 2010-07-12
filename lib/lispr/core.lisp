@@ -142,3 +142,4 @@
 
 (defn class (object)
   (#class object))
+
