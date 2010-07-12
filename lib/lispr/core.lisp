@@ -126,3 +126,6 @@
 
 (defmacro chr (i)
   `(call chr (int ~i)))
+
+(defmacro raise (class message)
+  `(call raise Kernel ~class ~message))
