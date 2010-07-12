@@ -116,8 +116,9 @@ module Lispr
         namespace = $global[:namespaces]
         ns.each {|n|
           n = :global if n == ""
+          raise "Namespace #{n} doesn't exist!" unless namespace.is_a?(Hash) \
+            and namespace.has_key? n
           namespace = namespace[n]
-          raise "Namespace #{n} doesn't exist!" unless namespace
         }
         namespace[sym]                
       else
