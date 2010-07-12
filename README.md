@@ -91,6 +91,28 @@ in favor of something else):
 
         (ruby "1.upto(5).each {|num| print num}")
             12345 => 1
+
+Using namespaces:
+
+        (def var "I'm defined globally!")
+        ; jump into a new namespace
+        (ns a)
+        var
+            => "I'm defined globally!"
+        (def var "I'm local to namespace a!")
+        var
+            => "I'm local to namespace a!"
+        ; . is for namespaces, a.b means value b from namespace a .b means
+        ; the value b from the global namespace
+        ; of course, it is bad practice to override variable names
+        .var
+            => "I'm defined globally!"
+        ; calling ns without a parameter will jump back to global namespace
+        (ns)
+        var
+            => "I'm defined globally!"
+        a.var
+            => "I'm local to namespace a!"
             
 ####Ruby interoperability
 
@@ -144,4 +166,8 @@ Exception Handling:
 The try block will use the first catch that matches, not the most accurate. If
 no matching block is found, the exception falls through. If no error is thrown,
 try will return the last value evaluated
-            
+
+
+Throwing Exceptions:
+        (raise Exception "BOOM!")
+            => Exception: BOOM!
