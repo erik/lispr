@@ -85,18 +85,6 @@ module Lispr
   }
   $scope["puts"] = puts_
 
-  car = lambda { |scope, value|
-   value.eval(scope).car
-  }
-  $scope["car"]   = car
-  $scope["first"] = car
-
-  cdr = lambda {|scope, value|
-    value.eval(scope).cdr
-  }
-  $scope["cdr"]   = cdr
-  $scope["rest"]  = cdr
-
   #(eval "(+ 1 2) (+ 4 2)") will return 3, not [3, 6] or anything like that
   #it only evaluates the first expression, and returns that
 

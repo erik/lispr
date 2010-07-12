@@ -89,6 +89,16 @@
 (defn rand-int (n) (#rand Kernel n))
 
 ;;lists
+(defn car (l)
+  (#car l))
+  
+(alias first car)
+
+(defn cdr (l)  
+  (#cdr l))
+
+(alias rest cdr)
+  
 (defn second (l)
   (first (rest l)))
   
