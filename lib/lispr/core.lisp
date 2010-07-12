@@ -139,3 +139,6 @@
 
 (defmacro raise (class message)
   `(call raise Kernel ~class ~message))
+
+(defn class (object)
+  (#class object))

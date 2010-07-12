@@ -55,9 +55,6 @@ module Lispr
 
   #standard utility functions
 
-  class_ = lambda { |scope, first| first.eval(scope).class }
-  $scope["class"] = class_
-
   comment = lambda { |scope, *args| $scope["nil"]}
   $scope["comment"] = comment
 
