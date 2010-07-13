@@ -119,6 +119,30 @@
   
 (defn nth (coll index)
   (#[] (#flatten coll) index))
+
+(defn drop (n xs)
+  (loop (num n, coll xs)
+    (when (and (pos? num) (not (nil? coll)))
+        (recur (dec num) (rest coll)))
+    coll))
+
+(defn drop-while (pred c)
+  (loop (coll c)
+    (when (and (pred (first coll)) (not (nil? coll)))
+        (recur (rest coll)))
+    coll))
+
+; (take 3 '(1)) => (1)
+(defn take (num coll)
+  (if (and (pos? num) (not (nil? coll)))
+    (cons (first coll) (take (dec num) (rest coll)))
+    '()))
+
+(defn take-while (pred coll)
+  (if (and (not (nil? coll)) (pred (first coll)))
+     (cons (first coll) (take-while pred (rest coll)))
+      '()))
+
   
 (defn count (coll)
   (#count coll))
