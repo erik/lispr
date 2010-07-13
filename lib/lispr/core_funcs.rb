@@ -396,7 +396,7 @@ module Lispr
     sym = sym == [] ? :global : sym[0]
     raise "ns expects a symbol, but got a #{sym.class}" \
      unless sym.is_a?(LispSymbol) or sym.is_a?(Symbol)
-    $global[:namespaces][sym.value] = Scope.new scope \
+    $global[:namespaces][sym.value] = Scope.new $global[:namespaces][:global] \
       unless $global[:namespaces][sym.value]
     $global[:scope] = sym.value
   }

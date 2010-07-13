@@ -103,6 +103,9 @@ Using namespaces:
             => "I'm defined globally!"
         a.var
             => "I'm local to namespace a!"
+
+Nested namespaces are (at least for now) not possible, `(ns a)` followed by 
+`(ns b)` will create two separate namespaces, not `a` and `a.b`
             
 ####Ruby interoperability
 
