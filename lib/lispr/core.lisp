@@ -41,6 +41,9 @@
 (defmacro when (test, body)
  `(if ~test ~body nil))
 
+(defmacro not= (a b)
+  `(not (= ~a ~b)))
+
 ;; measure time taken to evaluate body, returns the result of evaluating body
 (defmacro time (body)
  `(let (start (#now Time)
@@ -53,6 +56,15 @@
  `(unless (nil? ~coll)
     (reduce ~f (~f ~val (first ~coll)) (rest ~coll))
     ~val))
+
+(defn filter (pred, coll)
+  (let (elem (first coll))
+    (if (nil? elem)
+        '()
+        (if (pred elem)
+            (cons elem (filter pred (rest coll)))
+            (filter pred (rest coll))))))
+
 
 ;;apply cannot be implemented until & is!
 ;;(defmacro apply (func coll))
@@ -134,12 +146,21 @@
 (defmacro inspect (object)
   `(call inspect ~object))
 
-(defmacro chr (i)
-  `(call chr (int ~i)))
-
 (defmacro raise (class message)
   `(call raise Kernel ~class ~message))
 
 (defn class (object)
   (#class object))
+
+; convert 65 into 'A'
+(defmacro chr (i)
+  `(call chr (int ~i)))
+  
+; opposite of chr; converts 'A' into 65
+(defmacro num (c)
+  `(do 
+    (when (or (not (#is_a? ~c String)) (> (count ~c) 1))
+      (raise ArgumentError (str "Bad argument: " (inspect ~c))))
+    (call [] (str ~c) 0)))  
+
 
