@@ -82,6 +82,7 @@ module Lispr
   }
   $global[:namespaces][:global]["puts"] = puts_
 
+
   #(eval "(+ 1 2) (+ 4 2)") will return 3, not [3, 6] or anything like that
   #it only evaluates the first expression, and returns that
 

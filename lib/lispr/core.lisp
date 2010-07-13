@@ -78,25 +78,15 @@
 (defn dec (num) (- num 1))
 
 (defmacro zero? (num)
- `(if (= 0 ~num)
-    true
-    false))
+ `(= 0 ~num))
 (defmacro pos? (num)
- `(if (> ~num 0)
-    true
-    false))
+ `(> ~num 0))
 (defmacro neg? (num)
- `(if (< ~num 0)
-    true
-    false))
+ `(< ~num 0))
 (defmacro even? (num)
- `(if (= 0 (% ~num 2))
-    true
-    false))
+ `(= 0 (% ~num 2)))
 (defmacro odd? (num)
- `(if (even? ~num)
-    false
-    true))
+ `(not (even? ~num)))
 
 ; floating point random number
 (defn rand () (#rand Kernel))
@@ -188,6 +178,9 @@
   `(do 
     (when (or (not (#is_a? ~c String)) (> (count ~c) 1))
       (raise ArgumentError (str "Bad argument: " (inspect ~c))))
-    (call [] (str ~c) 0)))  
+    (call [] (str ~c) 0))) 
+
+(defn gets () 
+  (#readline (ruby "$stdin")))
 
 

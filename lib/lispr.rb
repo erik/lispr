@@ -1,4 +1,5 @@
 #TODO: Escapes don't work
+#TODO: Syntax for accessing Ruby globals
 
 require 'lispr/command_line'
 require 'lispr/reader'
