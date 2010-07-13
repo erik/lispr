@@ -3,6 +3,23 @@ class Object; def value; self; end; end
 class TrueClass; def value; true; end; end
 class FalseClass; def value; false; end; end
 class Numeric; def value; self; end; end
+class String
+  def car
+    if size > 0
+      self.to_s[0].chr
+    else
+      $global[:namespaces][:global]["nil"]
+    end
+  end
+
+  def cdr
+    if size == 0
+      $global[:namespaces][:global]["nil"]
+    else
+      self.to_s[1..-1]
+    end
+  end
+end
 
 module Lispr
   module Generic
@@ -179,7 +196,6 @@ module Lispr
         return val.to_s == oth
       end
     end
-
   end
 
   class LispNumeric

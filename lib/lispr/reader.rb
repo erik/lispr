@@ -181,10 +181,27 @@ module Lispr
     def read_string
       str = ""
       while self.shift != '"'
-        str << self.current
+        str << self.current unless self.current == '\\'
         if self.current == '\\'
-          str << self.current
-          str << self.shift
+          esc = self.shift
+          case esc
+            when 'a'
+              str << "\a"
+            when 'b'
+              str << "\b"
+            when 'n'
+              str << "\n"
+            when 'r'
+              str << "\r"
+            when '\\'
+              str << "\\"
+            when 's'
+              str << "\s"
+            when 't'
+              str << "\t"
+            else
+              raise "Unrecognized escape sequence: \\#{esc}"
+          end
         end
       end
       LispString.new str

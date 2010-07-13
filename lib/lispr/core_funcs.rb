@@ -88,9 +88,9 @@ module Lispr
 
   #Possibly take Clojure's approach of read-string to create an object from a
   #string and eval to evaluate it?
-  eval = lambda {|scope, string| 
+  eval = lambda {|scope, string|
     begin
-      exprs = Lispr::Reader.new(string.to_s + "\n").read
+      exprs = Lispr::Reader.new(string.eval(scope).to_s + "\n").read
       exprs[0].eval(scope)
     rescue Exception => e
       raise e.class, "eval: #{e.message}"
@@ -387,7 +387,7 @@ module Lispr
     args.each {|elem|
       array << elem.eval(scope).value
     }
-    class_.eval(scope).send(method.value, *array)
+    class_.eval(scope).__send__(method.value, *array)
   }
   $global[:namespaces][:global]["call"] = call
 
@@ -402,5 +402,16 @@ module Lispr
     $global[:scope] = sym.value
   }
   $global[:namespaces][:global]["ns"] = ns
+
+  thread = lambda {|scope, *body|
+    last = nil
+    Thread.new do
+      body.each {|exp|
+        last = exp.eval(scope)
+      }
+    end
+    last
+  }
+  $global[:namespaces][:global]["thread"] = thread
 end
 
