@@ -3,6 +3,25 @@ class Object; def value; self; end; end
 class TrueClass; def value; true; end; end
 class FalseClass; def value; false; end; end
 class Numeric; def value; self; end; end
+class Hash
+  def call(scope, sym)
+    val = sym.eval(scope)
+    ret = self[[val.class, val.value]][1]
+    if ret
+      self[[val.class, val.value]][0].new ret
+    end
+  end
+  def to_s
+    str = "{ "
+    keys.each {|key|
+      str << "#{key.inspect} => #{self[key].inspect}, "
+    }
+    str << "\b }"
+  end
+  def eval(scope)
+    self
+  end
+end
 class String
   def car
     if size > 0
@@ -32,6 +51,10 @@ module Lispr
       rescue Exception => e
         return val == oth
       end
+    end
+
+    def == (other)
+      other.is_a?(self.class) and other.value == self.value
     end
   end
 
@@ -224,6 +247,10 @@ module Lispr
     include Generic
     def initialize value
       @value = value
+    end
+
+    def eql? scope, other
+      other.eval(scope).is_a?(Keyword) and other.eval(scope).value == @value
     end
 
     def to_s

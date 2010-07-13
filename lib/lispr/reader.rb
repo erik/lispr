@@ -2,7 +2,7 @@
 module Lispr
   class Reader
     @@ws = /\s+|,/
-
+    @@delim = /[(){}]|#{@@ws}/
     def initialize(source)
       @line_num = 1
       @source   = source + "\n" 
@@ -55,6 +55,12 @@ module Lispr
         #extraneous closing paren
         elsif self.current == ')'
           raise SyntaxError, "Unexpected closing paren on line #{@line_num}"
+
+        elsif self.current == '{'
+          expr << self.read_hash
+
+        elsif self.current == '}'
+          raise SyntaxError, "Unexpected closing brace on line #{@line_num}"
 
         #read a string
         elsif self.current == '"'
@@ -127,6 +133,12 @@ module Lispr
 
         elsif self.current == '('
           expr << self.read_list
+
+        elsif self.current == '{'
+          expr << self.read_hash
+
+        elsif self.current == '}'
+          raise SyntaxError, "Unexpected closing brace on line #{@line_num}"
 
         elsif self.current == '"'
           expr << self.read_string
@@ -209,7 +221,7 @@ module Lispr
 
     def read_num
       num = self.current
-      until self.shift =~ /[()]|#{@@ws}/
+      until self.shift =~ @@delim
         num << self.current
       end
       self.unshift
@@ -219,7 +231,7 @@ module Lispr
 
     def read_symbol
       sym = self.current
-      until self.shift =~ /[()]|#{@@ws}/
+      until self.shift =~ @@delim
         sym += self.current
       end
       self.unshift
@@ -229,13 +241,24 @@ module Lispr
 
     def read_keyword
       keyword = ""
-      until self.shift =~ /[()]|#{@@ws}/
+      until self.shift =~ @@delim
         keyword += self.current
       end
       self.unshift
 
       Keyword.new(keyword)
     end
+
+    def read_hash
+      self.shift
+      expr = []
+      until self.current == '}'
+        val = self.read(true) 
+        expr << [val[0].class, val[0].value] unless val == []
+      end
+      Hash[*expr]
+    end
   end
+ 
 end
 
