@@ -41,6 +41,9 @@
 (defmacro when (test, body)
  `(if ~test ~body nil))
 
+(defmacro when-not (test, body)
+ `(if ~test nil ~body))
+
 (defmacro not= (a b)
   `(not (= ~a ~b)))
 

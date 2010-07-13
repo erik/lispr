@@ -355,7 +355,7 @@ module Lispr
     eval = expr.eval(scope)
     return true if eval.nil?
     return true if eval.is_a?(LispSymbol) and eval.value == nil
-    return true if eval.is_a?(List) and eval.value.flatten.empty?
+    return true if eval.is_a?(List) and (eval.value.flatten.empty? or eval.value.flatten == [])
     false
   }
   $global[:namespaces][:global]["nil?"] = nil_

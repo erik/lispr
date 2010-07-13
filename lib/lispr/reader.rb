@@ -5,8 +5,7 @@ module Lispr
 
     def initialize(source)
       @line_num = 1
-      #At the risk of looking stupid, figure out why the hell this works!
-      @source   = source + "\n" * source.length
+      @source   = source + "\n" 
 
       @index    = 0
     end
@@ -60,6 +59,11 @@ module Lispr
         #read a string
         elsif self.current == '"'
           expr << self.read_string
+
+        elsif self.current == '-'
+          t = self.shift
+          self.unshift
+          expr << self.read_num if t =~ /[0-9]/
 
         #read an int or floating point
         elsif self.current =~ /[0-9]/
@@ -127,11 +131,16 @@ module Lispr
         elsif self.current == '"'
           expr << self.read_string
 
+        elsif self.current == '-'
+          t = self.shift
+          self.unshift
+          expr << self.read_num if t =~ /[0-9]/
+
         elsif self.current =~ /[0-9]/
           expr << self.read_num
 
         elsif self.current == '.'
-          puts "WARNING: Using . in lists is depreciated and will be removed"
+          puts "WARNING: Using . in lists is deprecated and will be removed"
           proper = false
 
         elsif self.current == ':'
