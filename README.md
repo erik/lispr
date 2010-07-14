@@ -1,6 +1,6 @@
 #lispr
-lispr is a Ruby implementation of Lisp. As of right now, it is mostly an
-unfinished implementation based on McCarthy's original Lisp, but has the ability
+lispr is a Ruby implementation of Lisp. It is mostly an implementation based 
+strongly on both McCarthy's original Lisp and Clojure, but has the ability
 to play nicely with Ruby objects now, and some additional functionality soon.
 
 Some basic concepts, such as the structure of the reader, were adapted from
@@ -29,7 +29,8 @@ Right now, file evaluation is pretty rudimentary, and will be fleshed out in the
 future
 
 ##Examples
-Check out lib/lispr/core_funcs.rb, and lib/lispr/core.lisp for other functions
+Check out lib/lispr/core_funcs.rb, and lib/lispr/core.lisp for other functions,
+and the examples/ dir for some more "real" examples
 
 *As in Clojure, a comma is whitespace*
 
@@ -106,6 +107,25 @@ Using namespaces:
 
 Nested namespaces are (at least for now) not possible, `(ns a)` followed by 
 `(ns b)` will create two separate namespaces, not `a` and `a.b`
+
+Hashes:
+
+Hashes are constructed with the `{[key value]*}` syntax:
+
+        {:a 1 :b 2}
+            => { :a => 1, :b => 2 }
+
+This will create a LispHash Object, not a Hash Object. LispHash is a subclass of
+Hash which deals with Ruby being finicky about Object equality 
+(i.e. `Object.new == Object.new` returns false)
+
+Hashes called with a key will return the value of the key (or nil if it doesn't
+exist):
+
+        ({:a 1 :b 2} :a)
+            => 1
+        ({:a 1 :b 2} :c)
+            => nil
             
 ####Ruby interoperability
 
@@ -162,5 +182,6 @@ try will return the last value evaluated
 
 
 Throwing Exceptions:
+
         (raise Exception "BOOM!")
             => Exception: BOOM!
