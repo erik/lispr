@@ -206,6 +206,9 @@ module Lispr
   $global[:namespaces][:global]["backquote"] = backquote
 
   def_ = lambda { |scope, symbol, value|
+# save this for when readonly, and mutable variables are implemented
+#    raise "Redefinition of #{symbol}!" if \
+#      $global[:namespaces][$global[:scope]].scope.has_key?(symbol.to_s)
     $global[:namespaces][$global[:scope]][symbol.to_s] = value.eval(scope)
    }
   $global[:namespaces][:global]["def"]  = def_
@@ -378,16 +381,13 @@ module Lispr
 
   ruby = lambda { |scope, value|
     raise "String expected as argument!" unless value.eval(scope).is_a?(String)
-    eval value.eval(scope).to_s
+    Kernel.eval value.eval(scope).to_s
   }
   $global[:namespaces][:global]["ruby"] = ruby
 
   call = lambda { |scope, method, class_, *args|
-    array = []
-    args.each {|elem|
-      array << elem.eval(scope).value
-    }
-    class_.eval(scope).__send__(method.value, *array)
+    class_.eval(scope).__send__(method.value, *args.collect \
+      {|elem| elem.eval(scope).value})
   }
   $global[:namespaces][:global]["call"] = call
 

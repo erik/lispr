@@ -1,5 +1,5 @@
 #opening up some classes to add a value method
-class Object; def value; self; end; end
+class Object; def value; self; end; def eval(scope); self; end; end
 class TrueClass; def value; true; end; end
 class FalseClass; def value; false; end; end
 class Numeric; def value; self; end; end
@@ -7,9 +7,6 @@ class Hash
   def call(scope, sym)
     val = sym.eval(scope)
     self[val]
-  end
-  def eval(scope)
-    self
   end
 end
 class String

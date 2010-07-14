@@ -9,7 +9,7 @@ module Lispr
     def [](symbol)
       #uppercase means Ruby class
       if symbol[0].chr =~ /[A-Z]/
-        return eval(symbol)
+        return Kernel.eval(symbol)
       end
       if @scope.has_key? symbol
         return @scope[symbol]

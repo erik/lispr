@@ -106,6 +106,9 @@ module Lispr
         elsif self.current == '#'
           expr << LispSymbol.new("call")
 
+        elsif self.current == '$'
+          expr << Kernel.eval(self.read_symbol.to_s)
+
         #everything else is a symbol
         else
           expr << self.read_symbol
@@ -185,6 +188,9 @@ module Lispr
         #ruby method call
         elsif self.current == '#'
           expr << LispSymbol.new("call")
+
+        elsif self.current == '$'
+          expr << Kernel.eval(self.read_symbol.to_s)
 
         else
           expr << self.read_symbol
