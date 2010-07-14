@@ -140,7 +140,7 @@
     (loop (num  max, l '())
         (if (<= num min)
             l
-            (recur (dec num) (cons num l)))))
+            (recur (dec num) (#new List (#flatten (cons num l)))))))
       
 (defn count (coll)
   (#count coll))
@@ -188,4 +188,10 @@
 (defn gets () 
   (#readline (ruby "$stdin")))
 
+; some math related functions
+(ns math)
+
+(defn fact (n)
+    (reduce * 1 (range 1 (inc n))))
+(ns)
 
