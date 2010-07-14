@@ -146,7 +146,11 @@ module Lispr
         elsif self.current == '-'
           t = self.shift
           self.unshift
-          expr << self.read_num if t =~ /[0-9]/
+          if t =~ /[0-9]/
+            expr << self.read_num 
+          else
+            expr << self.read_symbol
+          end
 
         elsif self.current =~ /[0-9]/
           expr << self.read_num

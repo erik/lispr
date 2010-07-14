@@ -136,7 +136,12 @@
      (cons (first coll) (take-while pred (rest coll)))
       '()))
 
-  
+(defn range (min max)
+    (loop (num  max, l '())
+        (if (<= num min)
+            l
+            (recur (dec num) (cons num l)))))
+      
 (defn count (coll)
   (#count coll))
   
