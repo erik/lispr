@@ -254,9 +254,9 @@ module Lispr
       expr = []
       until self.current == '}'
         val = self.read(true) 
-        expr << [val[0].class, val[0].value] unless val == []
+        expr << val[0] unless val == []
       end
-      Hash[*expr]
+      LispHash[*expr]
     end
   end
  

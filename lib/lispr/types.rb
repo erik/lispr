@@ -6,17 +6,7 @@ class Numeric; def value; self; end; end
 class Hash
   def call(scope, sym)
     val = sym.eval(scope)
-    ret = self[[val.class, val.value]][1]
-    if ret
-      self[[val.class, val.value]][0].new ret
-    end
-  end
-  def to_s
-    str = "{ "
-    keys.each {|key|
-      str << "#{key.inspect} => #{self[key].inspect}, "
-    }
-    str << "\b }"
+    self[val]
   end
   def eval(scope)
     self
@@ -174,7 +164,7 @@ module Lispr
     end
 
     def to_s
-      "#{@value}"
+      @value.to_s
     end
 
     def inspect
@@ -329,6 +319,23 @@ module Lispr
 
     def to_s
       "(macro #{@bindings.to_s} #{@body.to_s})"
+    end
+  end
+
+  class LispHash < Hash
+    def [](val)
+      self.keys.each {|key|
+        return self.fetch(key) if val.is_a?(key.class) and key.value == val.value
+      }
+      nil
+    end
+    # slightly prettier to_s
+    def to_s
+      str = "{ "
+      keys.each {|key|
+        str << "#{key} => #{self[key].to_s}, "
+      }
+      str << "\b\b }"
     end
   end
 end
