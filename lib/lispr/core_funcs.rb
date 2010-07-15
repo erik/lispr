@@ -1,3 +1,4 @@
+require 'thread' # for Mutex
 require 'lispr/types'
 require 'lispr/scope'
 
@@ -413,5 +414,16 @@ module Lispr
     last
   }
   $global[:namespaces][:global]["thread"] = thread
+
+  lock = lambda {|scope, *body|
+    last = nil
+    Mutex.new.synchronize {
+      body.each{|exp|
+        last = exp.eval(scope)
+      }
+    }
+    last
+  }
+  $global[:namespaces][:global]["lock"] = lock
 end
 

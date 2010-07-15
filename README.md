@@ -126,6 +126,30 @@ exist):
             => 1
         ({:a 1 :b 2} :c)
             => nil
+
+####Threads:
+
+Threads are fairly rudimentary. Nothing fancy for now
+
+        (thread 
+            (#sleep Thread 5)
+            (puts "I'm awake!"))
+                => nil
+        ; ... 5 seconds go by ...
+        I'm awake!
+
+To make an operation atomic, you can use the lock special form, which will 
+evaluate *everything* passed to it without yielding to other threads. It will
+return the last value evaluated:
+
+        (lock
+            (#sleep Thread 1)
+            (puts "Now I'm awake! Here, have a number!")
+            (rand-int 42))
+            ; 1 second passes ...
+            Now I'm awake, here, have a number 
+                => 12
+
             
 ####Ruby interoperability
 

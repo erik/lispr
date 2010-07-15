@@ -7,6 +7,5 @@ require 'lispr/version'
 require 'lispr/core_funcs'
 
 module Lispr
-
 end
 
