@@ -256,6 +256,8 @@ module Lispr
               str << "\s"
             when 't'
               str << "\t"
+            when '"'
+              str << '"'
             else
               raise "Unrecognized escape sequence: \\#{esc}"
           end

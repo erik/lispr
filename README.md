@@ -83,6 +83,22 @@ in favor of something else):
         (ruby "1.upto(5).each {|num| print num}")
             12345 => 1
 
+Literal Strings:
+
+Lispr has a special kind of string called a literal string, which doesn't allow
+escape sequences. To create a literal string, surround the string in triple quotes:
+
+        """"Quote!", I said. Newlines = \n. No \e\s\c\a\p\e. \\\\"""
+            => ""Quote!", I said. Newlines = \n. No \e\s\c\a\p\e. \\\\"
+
+Compare that to a regular string, and you should be able to see the advantage:
+
+        "\"Quote!\", I said. Newlines = \\n. No \\e\\s\\c\\a\\p\\e. \\\\\\\\"
+            => ""Quote!", I said. Newlines = \n. No \e\s\c\a\p\e. \\\\"
+
+*Note that if the last character of your string is a ", then you must have a space*
+*before the closing """ to avoid a parse error*
+
 Using namespaces:
 
         (def var "I'm defined globally!")
