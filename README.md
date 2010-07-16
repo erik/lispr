@@ -187,6 +187,28 @@ make `5, nil` a single argument by passing it as a list. This *will* be changed.
             Hello, World
             => nil
 
+Blocks and Enumerations:
+
+You can create a block (actually a Proc object) with the block special form:
+
+For instance, this:
+        (block (x)
+            (puts x))
+
+Is equivalent to this Ruby code:
+        Proc.new { |x|
+            puts x
+        }
+
+If you want to do something like `5.times {|x| puts x}`, you will need to use
+another special form, enum, the reader macro for which is &. (& followed by
+whitespace is just an ordinary symbol)
+
+        (&times 5 (block (x) (puts x)))
+
+I realize this isn't the most elegant, but I feel that it adheres fairly closely
+to Ruby, without destroying Lisp's distinct style.
+
 Exception Handling:
 
         (try 
