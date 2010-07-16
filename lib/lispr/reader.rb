@@ -64,7 +64,15 @@ module Lispr
 
         #read a string
         elsif self.current == '"'
-          expr << self.read_string
+          n2 = self.shift
+          n3 = self.shift
+          if n2 == '"' and n3 == '"'
+            expr << self.read_literal_string
+          else
+            self.unshift
+            self.unshift
+            expr << self.read_string
+          end
 
         elsif self.current == '-'
           t = self.shift
@@ -152,8 +160,17 @@ module Lispr
         elsif self.current == '}'
           raise SyntaxError, "Unexpected closing brace on line #{@line_num}"
 
+        #read a string
         elsif self.current == '"'
-          expr << self.read_string
+          n2 = self.shift
+          n3 = self.shift
+          if n2 == '"' and n3 == '"'
+            expr << self.read_literal_string
+          else
+            self.unshift
+            self.unshift
+            expr << self.read_string
+          end
 
         elsif self.current == '-'
           t = self.shift
@@ -243,6 +260,26 @@ module Lispr
               raise "Unrecognized escape sequence: \\#{esc}"
           end
         end
+      end
+      str
+    end
+
+    def read_literal_string
+      self.shift
+      str = ""
+      while true
+        s = self.current
+        if s == '"'
+          n2 = self.shift
+          n3 = self.shift
+          if n2 == '"' and n3 == '"'
+            break
+          end
+          self.unshift
+          self.unshift
+        end
+        str << s
+        self.shift
       end
       str
     end
