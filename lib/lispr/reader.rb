@@ -244,7 +244,7 @@ module Lispr
           end
         end
       end
-      LispString.new str
+      str
     end
 
     def read_num

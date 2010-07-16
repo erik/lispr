@@ -9,20 +9,40 @@ class Hash
     self[val]
   end
 end
+
 class String
+  def count
+    LispNumeric.new self.length
+  end
+
+  def flatten
+    self
+  end
+
   def car
-    if size > 0
-      self.to_s[0].chr
+    if self.size > 0
+      self[0].chr
     else
       $global[:namespaces][:global]["nil"]
     end
   end
 
   def cdr
-    if size == 0
+    if self.size == 0
       $global[:namespaces][:global]["nil"]
+
     else
-      self.to_s[1..-1]
+      self[1..-1]
+    end
+  end
+
+  def eql? scope, other
+    val = self.eval(scope)
+    oth = other.eval(scope)
+    begin
+      return val.value == oth.value
+    rescue Exception => e
+      return val.to_s == oth
     end
   end
 end
@@ -44,9 +64,6 @@ module Lispr
       other.is_a?(self.class) and other.value == self.value
     end
   end
-
-  #Each type contains at least 2 methods, to_s for a string representation of it
-  #and eval, for the semantic value of the object
 
   class Atom
     include Generic
@@ -150,60 +167,6 @@ module Lispr
         namespace[sym]                
       else
         scope[@value]
-      end
-    end
-  end
-
-  class LispString < String
-    include Generic
-    def initialize value
-      @value = value
-    end
-
-    def to_s
-      @value.to_s
-    end
-
-    def inspect
-      "#<#{self.class} @value=#{@value.inspect}>"
-    end
-
-    def eval(scope)
-      self
-    end
-
-    def count
-      LispNumeric.new @value.length
-    end
-
-    def flatten
-      @value
-    end
-
-    def car
-      if @value.size > 0
-        @value[0].chr
-      else
-        $global[:namespaces][:global]["nil"]
-      end
-    end
-
-    def cdr
-      if @value.size == 0
-        $global[:namespaces][:global]["nil"]
-
-      else
-        LispString.new @value[1..-1]
-      end
-    end
-
-    def eql? scope, other
-      val = self.eval(scope)
-      oth = other.eval(scope)
-      begin
-        return val.value == oth.value
-      rescue Exception => e
-        return val.to_s == oth
       end
     end
   end
