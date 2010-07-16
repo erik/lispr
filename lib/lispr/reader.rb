@@ -109,6 +109,15 @@ module Lispr
         elsif self.current == '$'
           expr << Kernel.eval(self.read_symbol.to_s)
 
+        elsif self.current == '&'
+          n = self.shift
+          if not n =~ @@delim
+            expr << LispSymbol.new("enum") 
+          else
+            self.unshift
+          end
+          expr << self.read_symbol
+
         #everything else is a symbol
         else
           expr << self.read_symbol
@@ -192,6 +201,15 @@ module Lispr
         elsif self.current == '$'
           expr << Kernel.eval(self.read_symbol.to_s)
 
+        elsif self.current == '&'
+          n = self.shift
+          if not n =~ @@delim
+            expr << LispSymbol.new("enum") 
+          else
+            self.unshift
+          end
+          expr << self.read_symbol
+          
         else
           expr << self.read_symbol
         end
