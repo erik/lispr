@@ -425,5 +425,27 @@ module Lispr
     last
   }
   $global[:namespaces][:global]["lock"] = lock
+
+  block = lambda {|scope, locals, *body|
+    Proc.new {|*args|
+      raise "Wrong number of arguments to block (#{args.length}" \
+      " for #{locals.count.value})" unless args.length == locals.count.value
+      local = Scope.new(scope)
+      i = 0
+      while i < args.length
+        local[locals.value[i].value] = args[i]
+        i += 1
+      end
+      body.each {|exp|
+        exp.eval(local)
+      }
+    }
+  }
+  $global[:namespaces][:global]["block"] = block
+
+  enum = lambda { |scope, method, obj, block|
+    obj.eval(scope).__send__(method.value, &block.eval(scope))
+  }
+  $global[:namespaces][:global]["enum"] = enum
 end
 
