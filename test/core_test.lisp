@@ -13,9 +13,8 @@
 (test.assert (= (drop 2 '(0 1 2 3 4 5)) '(2 3 4 5)))
 (test.assert (= (drop-while neg? '(-2 -1 0 1 2)) '(0 1 2)))
 
-;; Fix these
-(test.assert (= (take 2 "abc") '(a b)))
-;(test.assert (= (take-while neg? '(-2 -1 0 1 2)) '(-2 -1 )))
+(test.assert (= (take 2 "abc") '("a" "b")))
+(test.assert (= (take-while neg? '(-2 -1 0 1 2)) '(-2 -1 )))
 
 (test.assert (= (range 0 4) '(0 1 2 3)))
 (test.assert (= (count "abc") 3))

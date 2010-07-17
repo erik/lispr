@@ -131,17 +131,6 @@
   (if (and (pos? num) (not (nil? coll)))
     (cons (first coll) (take (dec num) (rest coll)))
     '()))
-;(defn take (n xs)
-;  (loop (num n , l '(), coll xs )
-;  (puts "L=" l)
-;    (if (and (pos? num) (not (nil? coll)))
-;        (do
-;            (puts "RECUR WITH" (dec num) (cons (first coll) l) (rest coll) )
-;            (recur (dec num) (cons (first coll) l) (rest coll) ))
-;        (do 
-;            (puts "RETURNING" l)
-;            l))))
-
 
 (defn take-while (pred coll)
   (if (and (not (nil? coll)) (pred (first coll)))
