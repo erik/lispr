@@ -7,9 +7,9 @@
 
 (test.assert (= (str (first "bc") "c") "bc"))
 (test.assert (= '(1 2 3 4) (rest '( 0 1 2 3 4))))
+
 (test.assert (= (third '( 1 2 3 )) 3))
 (test.assert (= (chr (nth "abcdef" 2 )) "c"))
-
 (test.assert (= (drop 2 '(0 1 2 3 4 5)) '(2 3 4 5)))
 (test.assert (= (drop-while neg? '(-2 -1 0 1 2)) '(0 1 2)))
 
@@ -26,6 +26,14 @@
 (test.assert (= (chr 65) "A"))
 (test.assert (= (num "A") 65))
 (test.should-raise (num "abc") ArgumentError)
+
+(test.assert (= [1 2 3] (array 1 2 3)))
+(test.assert (= '(3 2 1) (reverse (range 1 4))))
+
+(test.assert (= 5 (count (repeat 5 0))))
+(test.assert (= '( 1 1 1) (repeat 3 1)))
+
+(test.assert (= (append 0 '(1)) (cons 1 '(0))))
 
 (test.assert (= 120 (math.fact 5)))
 

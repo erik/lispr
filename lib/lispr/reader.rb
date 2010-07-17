@@ -225,7 +225,13 @@ module Lispr
 
         #ruby method call
         elsif self.current == '#'
-          expr << LispSymbol.new("call")
+          n = self.shift
+          if not n =~ /[(){}]|#{@@ws}/
+            expr << LispSymbol.new("call") 
+          else
+            self.unshift
+          end
+          expr << self.read_symbol
 
         elsif self.current == '$'
           expr << Kernel.eval(self.read_symbol.to_s)
@@ -310,7 +316,7 @@ module Lispr
 
     def read_symbol
       sym = self.current
-      until self.shift =~ @@delim
+      until self.shift =~ /[(){}]|#{@@ws}/
         sym += self.current
       end
       self.unshift

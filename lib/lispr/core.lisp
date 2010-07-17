@@ -194,11 +194,11 @@
   `(call chr (int ~i)))
   
 ; opposite of chr; converts 'A' into 65
-(defmacro num (c)
-  `(do 
-    (when (or (not (#is_a? ~c String)) (> (count ~c) 1))
-      (raise ArgumentError (str "Bad argument: " (inspect ~c))))
-    (call [] (str ~c) 0))) 
+(defn num (c)
+  (do 
+    (when (or (not (#is_a? c String)) (> (count c) 1))
+      (raise ArgumentError (str "Bad argument: " (inspect c))))
+    (#[] (str c) 0))) 
 
 (defn gets () 
   (#readline (ruby "$stdin")))
