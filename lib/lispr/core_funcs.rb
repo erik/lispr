@@ -74,7 +74,12 @@ module Lispr
     Array[ *args.collect {|x| x.eval(scope)}]
   }
   $global[:namespaces][:global]["array"] = array
-  
+
+  hash = lambda {|scope, *args|
+    LispHash[*args.collect {|x| x.eval(scope)}]
+  }
+  $global[:namespaces][:global]["hash"] = hash
+
   print_ = lambda{ |scope, *values|
     values.each{|val| print val.eval(scope).to_s, ' '}
     nil

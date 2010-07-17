@@ -341,7 +341,7 @@ module Lispr
         val = self.read(true) 
         expr << val[0] unless val == []
       end
-      LispHash[*expr]
+      List.new(Array[LispSymbol.new("hash"), *expr])
     end
 
     def read_array

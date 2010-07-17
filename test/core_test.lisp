@@ -39,5 +39,6 @@
 
 (test.should-raise (/ 1 0 ) ZeroDivisionError)
 (test.should-raise (raise ArgumentError "BOOM") ArgumentError)
+(test.should-raise {:a not-defined} RuntimeError)
 
 (puts "Done. All tests passed.")
