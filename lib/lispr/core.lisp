@@ -137,6 +137,20 @@
      (cons (first coll) (take-while pred (rest coll)))
       '()))
 
+(defn repeat (n v)
+    (loop (num n coll '())
+        (unless (pos? num)
+            coll
+            (recur (dec num) (cons v coll)))))
+
+(defn reverse (coll)
+    (loop (ret '() xs coll)
+    (unless (nil? xs)
+        (recur (cons (first xs) ret) (rest xs))
+        ret)))
+
+
+
 (defn range (min max)
     (loop (num  max, l '())
         (if (<= num min)

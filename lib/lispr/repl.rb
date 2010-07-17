@@ -2,6 +2,13 @@ require 'lispr/reader'
 require 'lispr/version'
 require 'readline'
 
+class Array
+  #prettier to_s
+  def e_to_s
+    "[" +  self.collect {|e| (e.is_a?(Array) ? e.e_to_s : e.to_s) }.join(", ") + "]"
+  end
+end
+
 module Lispr
   class REPL
     def initialize(prompt='lispr> ')
@@ -24,9 +31,9 @@ module Lispr
                 puts "\"#{val.to_s}\""
               elsif val.nil?
                 puts "nil"
-              #because [].to_s returns "" and [].inspect returns "[]"
+              #because [].to_s returns "" and e_to_s is prettier
               elsif val.is_a?(Array)
-                puts val.inspect
+                puts val.e_to_s
               else
                 puts val.to_s
               end

@@ -70,6 +70,11 @@ module Lispr
   }
   $global[:namespaces][:global]["list"] = list
 
+  array = lambda {|scope, *args|
+    Array[ *args.collect {|x| x.eval(scope)}]
+  }
+  $global[:namespaces][:global]["array"] = array
+  
   print_ = lambda{ |scope, *values|
     values.each{|val| print val.eval(scope).to_s, ' '}
     nil
@@ -249,6 +254,14 @@ module Lispr
     List.new([value.eval(scope), list_eval.value].flatten)
   }
   $global[:namespaces][:global]["cons"] = cons
+
+  append = lambda {|scope, value, list|
+  list_eval = list.eval(scope)
+    raise "append expects a list, but got #{list.eval(scope).class}" \
+     unless list_eval.is_a?(List)
+    List.new([list_eval.value, value.eval(scope)].flatten)
+  }
+  $global[:namespaces][:global]["append"] = append
   
   #(let (x 1, y 2) (puts x) (puts y))
   let = lambda {|scope, binds, *body|

@@ -2,7 +2,7 @@
 module Lispr
   class Reader
     @@ws = /\s+|,/
-    @@delim = /[(){}]|#{@@ws}/
+    @@delim = /[(){}\[\]]|#{@@ws}/
     def initialize(source)
       @line_num = 1
       @source   = source + "\n" 
@@ -61,6 +61,12 @@ module Lispr
 
         elsif self.current == '}'
           raise SyntaxError, "Unexpected closing brace on line #{@line_num}"
+
+        elsif self.current == '['
+          expr << self.read_array
+
+        elsif self.current == ']'
+          raise SyntaxError, "Unexpected closing bracket on line #{@line_num}"
 
         #read a string
         elsif self.current == '"'
@@ -159,6 +165,12 @@ module Lispr
 
         elsif self.current == '}'
           raise SyntaxError, "Unexpected closing brace on line #{@line_num}"
+
+        elsif self.current == '['
+          expr << self.read_array
+
+        elsif self.current == ']'
+          raise SyntaxError, "Unexpected closing bracket on line #{@line_num}"
 
         #read a string
         elsif self.current == '"'
@@ -325,7 +337,16 @@ module Lispr
       end
       LispHash[*expr]
     end
+
+    def read_array
+      self.shift
+      expr = []
+      until self.current == ']'
+        val = self.read(true)
+        expr << val[0] unless val == []
+      end
+      List.new(Array[LispSymbol.new("array"), *expr])
+    end
   end
- 
 end
 
