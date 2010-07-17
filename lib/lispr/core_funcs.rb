@@ -243,9 +243,10 @@ module Lispr
   $global[:namespaces][:global]["cond"] = cond
 
   cons = lambda {|scope, value, list|
+  list_eval = list.eval(scope)
     raise "cons expects a list, but got #{list.eval(scope).class}" \
-     unless list.eval(scope).is_a?(List)
-    List.new([value.eval(scope)] << list.eval(scope).value)
+     unless list_eval.is_a?(List)
+    List.new([value.eval(scope), list_eval.value].flatten)
   }
   $global[:namespaces][:global]["cons"] = cons
   

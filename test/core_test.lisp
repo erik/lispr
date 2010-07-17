@@ -14,7 +14,7 @@
 (test.assert (= (drop-while neg? '(-2 -1 0 1 2)) '(0 1 2)))
 
 ;; Fix these
-;(test.assert (= (take 2 "abc") '(a b)))
+(test.assert (= (take 2 "abc") '(a b)))
 ;(test.assert (= (take-while neg? '(-2 -1 0 1 2)) '(-2 -1 )))
 
 (test.assert (= (range 0 4) '(0 1 2 3)))
