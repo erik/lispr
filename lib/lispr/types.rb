@@ -12,7 +12,7 @@ end
 
 class String
   def count
-    LispNumeric.new self.length
+    Lispr::LispNumeric.new self.length
   end
 
   def flatten

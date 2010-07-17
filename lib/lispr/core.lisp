@@ -55,10 +55,11 @@
     ret))
 
 ;; make val optional!
-(defmacro reduce (f val coll)
- `(unless (nil? ~coll)
-    (reduce ~f (~f ~val (first ~coll)) (rest ~coll))
-    ~val))
+
+(defn reduce (f val coll)
+    (unless (nil? coll)
+        (reduce f (f val (first coll)) (rest coll))
+        val))
 
 (defn filter (pred, coll)
   (let (elem (first coll))
@@ -193,5 +194,23 @@
 
 (defn fact (n)
     (reduce * 1 (range 1 (inc n))))
+
+; testing utilities
+(ns test)
+
+(defmacro assert (statement)
+    `(when (not ~statement)
+        (raise RuntimeError (str "Assert failed - " (str `~statement)))))
+
+(defmacro should-raise (statement exception)
+    `(when-not (= (try 
+                    ~statement
+                    (catch ~exception _ :raised)
+                    (catch Exception e (raise RuntimeError (str (str `~statement)
+                        " raised " (class e) ": " (#message e) " Expected: "
+                         ~exception))))
+                :raised)
+        (raise RuntimeError (str `~statement " didn't raise an exception"))))
+
 (ns)
 
