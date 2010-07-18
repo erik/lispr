@@ -326,6 +326,8 @@ module Lispr
 
     def read_keyword
       keyword = ""
+      raise "Keyword must be at least one character!" if self.shift =~ @@delim
+      self.unshift
       until self.shift =~ @@delim
         keyword += self.current
       end
