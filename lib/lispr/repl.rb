@@ -17,11 +17,22 @@ module Lispr
 
     end
 
+    # based off of this: http://bogojoker.com/readline/
+    # doesn't add blank lines or duplicates to history
+    def cust_readline
+      i = Readline.readline(@prompt, true)
+      return nil if i.nil?
+      Readline::HISTORY.pop if i =~ /^\s*$/ or Readline::HISTORY.to_a[-2] == i
+      i
+    end
+
+
     def repl
       puts "lispr v#{::Lispr::VERSION}"
       while true
         begin
-          input = Readline.readline(@prompt, true)
+          input = cust_readline
+          next if input.nil?
           begin
             exprs = Reader.new(input).read
             exprs.each do |exp|
