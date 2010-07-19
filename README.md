@@ -143,6 +143,11 @@ exist):
         ({:a 1 :b 2} :c)
             => nil
 
+Hashes may also be created with the hash special form:
+
+        (hash :a 1 :b 2)
+            => { :a => 1, :b => 2 }
+
 ####Threads:
 
 Threads are fairly rudimentary. Nothing fancy for now
@@ -177,11 +182,32 @@ Requiring and using files:
         ;   (call require Kernel "digest/sha1")
         ;
         ;# is a reader macro and is the same as call
-        ;notice that there isn't a space between # and h (it is allowed, but
-        ;won't be in the future)
+        ;notice that there isn't a space between # and h
         ;
         (#hexdigest Digest::SHA1 "secret!" )
             => "cb37de1d915a124412ff8113bef18511daec3050"
+
+Arrays:
+
+Lispr provides a syntax for creating Ruby Array Objects:
+
+        [1 2 3]
+            => [1, 2, 3]
+
+And since accessing array indexes is a bit of a pain with the
+regular `(#[] array-obj ind)` method, Arrays can be called:
+
+        (def arr [0 1 2 3 4])
+        (arr 0)
+            => 0
+        (arr 0 2)
+            => [0, 1]
+
+Like Hashes, Arrays may also be constructed with the array special form, which 
+takes any number of arguments:
+
+        (array 1 2 3 4 5)
+            => [1, 2, 3, 4, 5]
 
 Creating Ruby Objects:
         (new Array (5, nil))
