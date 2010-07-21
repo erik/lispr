@@ -171,11 +171,40 @@ module Lispr
     def initialize(bindings, body)
       @bindings = bindings
       @body     = body
+
+      #minimum number of arguments the fn can operate with
+      @min_args = -1
+      #maximum number of arguments the fn can accept. -1 if unlimited
+      @max_args = -1
+      
+      #only one optional argument is allowed, so have we used it already?
+      opt_args = false
+      
+      #determine min and max args
+      @bindings.value.each {|exp|
+        if exp.value =~ /\?\Z/
+          raise "Only one optional argument if allowed!" if opt_args
+          opt_args = true
+          @max_args += 1
+        else
+          @min_args += 1
+          @max_args += 1
+        end
+      }
     end
 
     def eval(scope)
       self
     end
+
+    #(defn func (x y? z) )
+    #(func 1 2 3) => x 1, y 2, z 3
+    #(func 1 3)   => x 1, y :not-provided, z 3
+
+    #(defn func (x y &z)
+    #(func 1 2 3) => x 1, y 2, z '(3)
+    #(func 1 2)   => x 1, y 2, z '()
+    #(func 1 2 3 4 5) => x 1, y 2, z '(3 4 5)
 
     #(fn (x y) (+ x y))
     def call(scope, *args)
@@ -184,15 +213,22 @@ module Lispr
 
       bind_ctr = 0
       arg_ctr  = 0
+      
+      raise "Expected between #{@min_args} and #{@max_args} arguments for function, " +
+        "but got #{args.length}" unless args.length.between?(@min_args, @max_args)
 
-      #this needs to be removed to allow arity!
-      raise "Expected #{@bindings.value.length - 1} arguments, " +
-        "but got #{args.length}" if @bindings.value.length - 1 != args.length
-
-      while bind_ctr < @bindings.value.length - 1 and arg_ctr <  args.length 
-        local[@bindings.value[bind_ctr].value] = args[arg_ctr].eval(scope)
+      while bind_ctr < @bindings.value.length - 1 and (arg_ctr <  args.length \
+                                                       or arg_ctr < @max_args)
+        arg_eval = args[arg_ctr].eval(scope)
+        val = @bindings.value[bind_ctr].value
+        if val =~ /\?$/ and (args.length <  @max_args)
+          local[val[0...-1]] = LispSymbol.new("not-provided")
+        else          
+          val = val[0...-1] if val =~ /\?$/
+          local[val] = arg_eval
+          arg_ctr += 1
+        end
         bind_ctr += 1
-        arg_ctr += 1
       end
 
       @body.eval(local)
@@ -206,26 +242,34 @@ module Lispr
   class Macro < Lambda
 
     def call(scope, *args)
-      #local scope
       local = Scope.new(scope)
 
       bind_ctr = 0
       arg_ctr  = 0
-      #this needs to be removed to allow arity!
-      raise "Expected #{@bindings.value.length - 1} arguments, " +
-        "but got #{args.length}" if @bindings.value.length - 1 != args.length
+      
+      raise "Expected between #{@min_args} and #{@max_args} arguments for macro, " +
+        "but got #{args.length}" unless args.length.between?(@min_args, @max_args)
 
-      while bind_ctr < @bindings.value.length - 1 and arg_ctr <  args.length 
-        local[@bindings.value[bind_ctr].value] = args[arg_ctr]
+      while bind_ctr < @bindings.value.length - 1 and (arg_ctr <  args.length \
+                                                       or arg_ctr < @max_args)
+        val = @bindings.value[bind_ctr].value
+        if val =~ /\?$/ and (args.length <  @max_args)
+          local[val[0...-1]] = LispSymbol.new("not-provided")
+        else          
+          val = val[0...-1] if val =~ /\?$/
+          local[val] = args[arg_ctr]
+          arg_ctr += 1
+        end
         bind_ctr += 1
-        arg_ctr += 1
       end
+
       @body.flatten!
 
-     @body.each {|exp|
+      @body[0...-1].each{|exp|
         exp.eval(local)
       }
       @body[-1].eval(local).eval(scope)
+
     end   
 
     alias [] call   

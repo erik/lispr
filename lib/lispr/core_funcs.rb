@@ -63,10 +63,7 @@ module Lispr
   $global[:namespaces][:global]["quote"] = quote
 
   list = lambda { |scope, *args|
-    tmp = []
-    args.each {|x| tmp << x.eval(scope)}
-    tmp << []
-    List.new tmp
+    List.new args.collect{|x| x.eval(scope)}
   }
   $global[:namespaces][:global]["list"] = list
 
@@ -124,7 +121,7 @@ module Lispr
 
   backquote = lambda {|scope, expr|
 
-  #FLAWED strategy, but may prove helpful
+    #FLAWED strategy, but may prove helpful
     #val.value.flatten!
     #return val unless val.is_a?(List)
     #list = []
@@ -138,41 +135,34 @@ module Lispr
     #
     #  unless elem.is_a?(List)
     #    if elem.value == "unquote" or elem.value == "unquote-splice"
-#          elem = List.new([elem, val.value[ctr += 1]])
-#          puts elem.inspect
-#        else
-#          list << elem
-#          ctr += 1
-#          next
-#        end
-#      end
-#      if elem.car.value == "unquote"
-#        list << elem.cdr.car.eval(scope)
-
-#      elsif elem.car.value == "unquote-splice"
-#        eval = elem.cdr.car.eval(scope)
-#        raise "unquote-splice expects a List, but got a #{eval.class}" unless \
-#          eval.is_a?(List)
-#        eval.value.each {|val|
-#          list << val unless val == []
-#        }         
-
-#      else
-
-#        list << backquote[scope, elem] #unless elem.value == []          
-
-#      end
-
-#      break if val == []
-
-
-#      ctr += 1
-#    end      
-#    
-#    retval = List.new(list.flatten) if list.flatten.size != 1
-#    retval = list[0] if list.flatten.size == 1
-#    puts "RETURNING>#{retval.inspect}"
-#    retval.eval(scope)
+    #      elem = List.new([elem, val.value[ctr += 1]])
+    #      puts elem.inspect
+    #    else
+    #      list << elem
+    #      ctr += 1
+    #      next
+    #    end
+    #  end
+    #  if elem.car.value == "unquote"
+    #    list << elem.cdr.car.eval(scope)
+    #  elsif elem.car.value == "unquote-splice"
+    #    eval = elem.cdr.car.eval(scope)
+    #    raise "unquote-splice expects a List, but got a #{eval.class}" unless \
+    #      eval.is_a?(List)
+    #    eval.value.each {|val|
+    #      list << val unless val == []
+    #    }         
+    #  else
+    #    list << backquote[scope, elem] #unless elem.value == []          
+    #  end
+    #  break if val == []
+    #  ctr += 1
+    #end      
+    #
+    #retval = List.new(list.flatten) if list.flatten.size != 1
+    #retval = list[0] if list.flatten.size == 1
+    #puts "RETURNING>#{retval.inspect}"
+    #retval.eval(scope)
 
     #Working (moreso) strategy, adapted from lispy
     if expr.class != List:

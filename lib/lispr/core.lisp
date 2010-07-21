@@ -1,6 +1,6 @@
 ;; Standard library functions
 
-(def *lispr-version* (ruby "Lispr::VERSION"))
+(def *lispr-version* Lispr::VERSION)
 
 ;;need to allow unquote splicing here
 (def defmacro (macro (n a  b) `(def ~n (macro ~a ~b))))
@@ -54,12 +54,13 @@
     (puts (str "Evaluation took " (- (#now Time) start) " seconds"))
     ret))
 
-;; make val optional!
 
-(defn reduce (f val coll)
+(defn reduce (f val? coll)
+  (if (= val :not-provided)
+      (reduce f (f (first coll)) (rest coll))
     (unless (nil? coll)
-        (reduce f (f val (first coll)) (rest coll))
-        val))
+      (reduce f (f val (first coll)) (rest coll))
+      val)))
 
 (defn filter (pred, coll)
   (let (elem (first coll))
@@ -151,11 +152,13 @@
 
 
 
-(defn range (min max)
-    (loop (num  max, l '())
+(defn range (min? max)
+  (if (= min :not-provided)
+      (range 0 max)
+      (loop (num  max, l '())
         (if (<= num min)
-            l
-            (recur (dec num) (#new List (#flatten (cons num l)))))))
+	  l
+	  (recur (dec num) (#new List (#flatten (cons num l))))))))
       
 (defn count (coll)
   (#count coll))
