@@ -113,7 +113,11 @@
   (first (rest (rest l))))
   
 (defn nth (coll index)
-  (#[] (#flatten coll) index))
+  (let (val (#[] (#flatten coll) index))
+    (if (= (class val) String)
+        (#ord val)
+        val)))
+    
 
 (defn drop (n xs)
   (loop (num n, coll xs)
