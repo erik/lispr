@@ -14,6 +14,10 @@ and a standard library for instance. Besides that, it is working however
 and you can use it for great profit.
 
 ##Usage
+You could either clone this repo (which is recommended), or go to the downloads
+section and get the latest tag. Once you have it downloaded, just run the 
+bin/lispr executable. You'll need Ruby installed to run it (obviously).
+
         Usage bin/lispr [options] [file]
     -v, --version                    Display version an exit
     -i, --interactive [prompt]        Start a REPL, optionally specifying a prompt
@@ -64,6 +68,38 @@ Defining functions:
         (greet "Sam")
             Hello, Sam!
             => nil
+
+Functions can accept optional parameters by appending ? to a symbol. If no value
+is specified for the symbol when the function is called, it will be given the
+Keyword value :not-provided.
+For example:
+
+        (defn hello (name?)
+            (if (= name :not-provided)
+                ; if called with no args, re-call the function with "World" as the arg
+                (hello "World")
+                (str "Hello, " name)))
+        (hello)
+            => "Hello, World"
+        (hello "boredomist")
+            => "Hello, boredomist"
+
+Only 1 optional parameter is permitted per function (otherwise it would be
+ambiguous)
+
+Functions can also take rest arguments, will take *any* amount of arguments in a
+list. As with optional arguments, there can be only one; and it must also be the
+last argument:
+
+        ; name is mandatory, args can be any length
+        (defn greet (name, args&)
+            (puts "Hello," name "\nYou gave me these:" args))
+        (greet "Martha")
+            => Hello, Martha
+               You gave me these: ()
+        (greet "Chris" 1 2 3 4 )
+            => Hello, Chris
+               You gave me these: (1 2 3 4)
 
 Cond:
 

@@ -236,7 +236,7 @@ module Lispr
         arg_eval = args[arg_ctr].eval(scope)
         val = @bindings.value[bind_ctr].value
         if val =~ /\?$/ and (args.length <  @max_args)
-          local[val[0...-1]] = LispSymbol.new("not-provided")
+          local[val[0...-1]] = Keyword.new("not-provided")
         elsif val =~ /\&$/
           local[val[0...-1]] = List.new(arg_ctr < args.length ? args[arg_ctr..-1] :  [])
           break
@@ -277,7 +277,7 @@ module Lispr
                                                        or @max_args == -1)
         val = @bindings.value[bind_ctr].value
         if val =~ /\?$/ and (args.length <  @max_args)
-          local[val[0...-1]] = LispSymbol.new("not-provided")
+          local[val[0...-1]] = Keyword.new("not-provided")
         elsif val =~ /\&$/
           local[val[0...-1]] = List.new(arg_ctr < args.length ? args[arg_ctr..-1] :  [])
           break
