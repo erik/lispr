@@ -246,15 +246,13 @@ takes any number of arguments:
             => [1, 2, 3, 4, 5]
 
 Creating Ruby Objects:
-        (new Array (5, nil))
+        (new Array 5, nil)
             => [nil, nil, nil, nil, nil]
         ;Alternatively:
         (#new Array 5 nil)
             => [nil, nil, nil, nil, nil]
 
-The 'new' macro expects only 2 arguments, a class, and a single parameter for
-the arguments to pass, meaning if you want to do `Array.new(5, nil)` you need to
-make `5, nil` a single argument by passing it as a list. This *will* be changed.
+The 'new' macro expects at least 1 argument, a class, followed by the arguments.
 
         (def s (#new String "Hallo, World"))
             => "Hallo, World"

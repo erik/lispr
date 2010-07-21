@@ -180,7 +180,7 @@
 ;;until & is implemented, args should be a list:
 ;;(new Array (3, "2"))
 ;;  => ["2", "2", "2"]
-(defmacro new (class,  args)
+(defmacro new (class,  args&)
   `(call new ~class ~@args))
 
 ;; require a Ruby file
