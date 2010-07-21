@@ -165,7 +165,7 @@ module Lispr
     #retval.eval(scope)
 
     #Working (moreso) strategy, adapted from lispy
-    if expr.class != List:
+    if expr.class != List
         return expr
       end
     new = []
@@ -184,12 +184,12 @@ module Lispr
         end
       end
 
-      if exp.class == List:
+      if exp.class == List
         if exp.car.value == "unquote"
           new << exp.cdr.car.eval(scope)
         elsif exp.car.value == "unquote-splice"
           l = exp.cdr.car.eval(scope)
-          for i in l.value[0...-1]:
+          for i in l.value[0...-1]
             new << i
           end
         else

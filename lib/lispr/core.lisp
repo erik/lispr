@@ -201,7 +201,10 @@
   (do 
     (when (or (not (#is_a? c String)) (> (count c) 1))
       (raise ArgumentError (str "Bad argument: " (inspect c))))
-    (#[] (str c) 0))) 
+    (if 
+        (= (class (#[] (str c) 0)) String)
+            (#ord c)
+            (#[] (str c) 0))))
 
 (defn gets () 
   (#readline (ruby "$stdin")))
