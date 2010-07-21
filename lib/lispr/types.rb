@@ -173,19 +173,27 @@ module Lispr
       @body     = body
 
       #minimum number of arguments the fn can operate with
-      @min_args = -1
+      @min_args = 0
       #maximum number of arguments the fn can accept. -1 if unlimited
-      @max_args = -1
+      @max_args = 0
       
       #only one optional argument is allowed, so have we used it already?
       opt_args = false
+      #same for rest args
+      rest_args = false
       
       #determine min and max args
-      @bindings.value.each {|exp|
+      @bindings.value.flatten.each_with_index {|exp, i|
         if exp.value =~ /\?\Z/
           raise "Only one optional argument if allowed!" if opt_args
           opt_args = true
           @max_args += 1
+        elsif exp.value =~ /&\Z/
+          raise "Rest argument must be last!" unless (@bindings.value[i] \
+                                                      == @bindings.flatten.value[-1])
+          raise "Only one rest argument permitted!" if rest_args
+          rest_args = true
+          @max_args = -1
         else
           @min_args += 1
           @max_args += 1
@@ -213,17 +221,26 @@ module Lispr
 
       bind_ctr = 0
       arg_ctr  = 0
-      
-      raise "Expected between #{@min_args} and #{@max_args} arguments for function, " +
-        "but got #{args.length}" unless args.length.between?(@min_args, @max_args)
+
+      if @max_args != -1
+        raise "Expected between #{@min_args} and #{@max_args} arguments for function, " +
+          "but got #{args.length}" unless args.length.between?(@min_args, @max_args)
+      else
+        raise "Expected at least #{@min_args} arguments for function, " +
+          "but got #{args.length}" unless args.length >= @min_args
+      end
 
       while bind_ctr < @bindings.value.length - 1 and (arg_ctr <  args.length \
-                                                       or arg_ctr < @max_args)
+                                                       or arg_ctr < @max_args \
+                                                       or @max_args == -1)
         arg_eval = args[arg_ctr].eval(scope)
         val = @bindings.value[bind_ctr].value
         if val =~ /\?$/ and (args.length <  @max_args)
           local[val[0...-1]] = LispSymbol.new("not-provided")
-        else          
+        elsif val =~ /\&$/
+          local[val[0...-1]] = List.new(arg_ctr < args.length ? args[arg_ctr..-1] :  [])
+          break
+        else
           val = val[0...-1] if val =~ /\?$/
           local[val] = arg_eval
           arg_ctr += 1
@@ -247,15 +264,24 @@ module Lispr
       bind_ctr = 0
       arg_ctr  = 0
       
-      raise "Expected between #{@min_args} and #{@max_args} arguments for macro, " +
-        "but got #{args.length}" unless args.length.between?(@min_args, @max_args)
+      if @max_args != -1
+        raise "Expected between #{@min_args} and #{@max_args} arguments for function, " +
+          "but got #{args.length}" unless args.length.between?(@min_args, @max_args)
+      else
+        raise "Expected at least #{@min_args} arguments for function, " +
+          "but got #{args.length}" unless args.length >= @min_args
+      end
 
       while bind_ctr < @bindings.value.length - 1 and (arg_ctr <  args.length \
-                                                       or arg_ctr < @max_args)
+                                                       or arg_ctr < @max_args \
+                                                       or @max_args == -1)
         val = @bindings.value[bind_ctr].value
         if val =~ /\?$/ and (args.length <  @max_args)
           local[val[0...-1]] = LispSymbol.new("not-provided")
-        else          
+        elsif val =~ /\&$/
+          local[val[0...-1]] = List.new(arg_ctr < args.length ? args[arg_ctr..-1] :  [])
+          break
+        else
           val = val[0...-1] if val =~ /\?$/
           local[val] = args[arg_ctr]
           arg_ctr += 1

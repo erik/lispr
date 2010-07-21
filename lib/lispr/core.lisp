@@ -3,8 +3,8 @@
 (def *lispr-version* Lispr::VERSION)
 
 ;;need to allow unquote splicing here
-(def defmacro (macro (n a  b) `(def ~n (macro ~a ~b))))
-(defmacro defn (name args body) `(def ~name (fn ~args ~body)))
+(def defmacro (macro (n a b&) `(def ~n (macro ~a ~@b))))
+(defmacro defn (name args body&) `(def ~name (fn ~args ~@body)))
 ;(alias new old)
 (defmacro alias (new old) `(def ~new ~old))
 
